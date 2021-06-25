@@ -47,7 +47,6 @@ function SearchResultsPage (props) {
         if(queryText)
             fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&query=${queryText}&page=${queryPage}&include_adult=false`)
                 .then(res => {
-                    console.log('hi')
                     if(res.ok)
                         return res.json()
                     else throw new Error("Server down. Please try later.")
@@ -113,6 +112,7 @@ function SearchResultsPage (props) {
     }) : null
 
     function handleChange(e) {
+        setResultList(null)
         setSearchType(e.target.value)
     }
 

@@ -29,9 +29,11 @@ export default function LoadingComponent({page}) {
     if(page === 'cast-feed') {
         return (
             <SkeletonTheme color="#505050" highlightColor="#303030">
-                <Skeleton height={250} width={150} className="mr-3"/>
-                <Skeleton height={250} width={150} className="mr-3"/>
-                <Skeleton height={250} width={150} className="mr-3"/>
+                <div style={{display:'flex'}}>
+                    <Skeleton height={250} width={150} className="mr-3"/>
+                    <Skeleton height={250} width={150} className="mr-3"/>
+                    <Skeleton height={250} width={150} className="mr-3"/>
+                </div>
             </SkeletonTheme>
         )
     }

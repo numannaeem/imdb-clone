@@ -27,6 +27,7 @@ function CastComponent({id}) {
                     bio: data.biography,
                     birthplace: data.place_of_birth,
                     aliases: data.also_known_as,
+                    department: data.known_for_department,
                     age: data.birthday && !data.deathday ? Math.floor((new Date(today) - new Date(data.birthday))/(1000*24*60*60*365)): null
                 }
                 setCast(filteredCast)
@@ -44,7 +45,7 @@ function CastComponent({id}) {
        
     }, [id])
     if(cast && cast.name) {
-        const knownFor = cast.knownFor? cast.knownFor.map(m => {
+        const knownFor = cast.knownFor && cast.knownFor.length? cast.knownFor.map(m => {
             return(
                 <div className='known-for' key={m.id} onClick={() => dispMovie(m.id)}>
                     <img src={m.imgUrl} alt="poster" />
@@ -60,13 +61,14 @@ function CastComponent({id}) {
                         <div className='cast-header'>
                             <img src={cast.pictureUrl} alt="Profile" width="266px" height="400px" />
                             <div className='cast-details'>
-                                <h1 className='mb-3'>{cast.name}</h1>
+                                <h1 className='font-weight-bold'>{cast.name}</h1>
                                 {cast.birthday ? <h5>Born on {cast.birthday} in {cast.birthplace || '-'} {cast.age ? <span className='text-muted '>({cast.age} years old)</span> : null}</h5> : null}
+                                <p><span className='text-warning'>Known for:</span> {cast.department || '-'}</p>
                                 <p><span className='text-warning'>Aliases:</span> {aliases || '-'}</p>
                             </div>
                         </div>
                         <h4 className='text-warning'>Movie wall</h4>
-                        <div className='movie-wall'>{knownFor}</div>
+                        <div className='movie-wall'>{knownFor || <p className=' text-muted font-italic'>none available</p>}</div>
                         <h4 className='text-warning'>Biography</h4>
                         <p style={{lineHeight:'1.6'}}>{cast.bio || <p className='text-muted font-italic'>no biography available</p>}</p>
                     </Col>
