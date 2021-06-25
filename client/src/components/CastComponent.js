@@ -31,21 +31,33 @@ function CastComponent({id}) {
                     age: data.birthday && !data.deathday ? Math.floor((new Date(today) - new Date(data.birthday))/(1000*24*60*60*365)): null
                 }
                 setCast(filteredCast)
-                fetch(`https://api.themoviedb.org/3/person/${id}/movie_credits?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
-                    .then(res => res.json())
-                    .then(data => {
-                        const knownFor = data.cast ? data.cast.map(m => ({
-                            title: m.title, 
-                                id: m.id, 
-                                imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w92/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png'
-                            })): []
-                        setCast(prev => ({...prev,knownFor}))
-                    })
+                return fetch(`https://api.themoviedb.org/3/person/${id}/movie_credits?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
             })
-       
+            .then(res => res.json())
+            .then(data => {
+                const castIn = data.cast ? data.cast.map(m => ({
+                    title: m.title, 
+                    id: m.id, 
+                    imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w92/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png'
+                })): []
+                const crewIn = data.crew ? data.crew.map(m => ({
+                    title: m.title, 
+                    id: m.id, 
+                    imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w92/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png'
+                })): []
+                setCast(prev => ({...prev, castIn, crewIn}))
+            })       
     }, [id])
-    if(cast && cast.name) {
-        const knownFor = cast.knownFor && cast.knownFor.length? cast.knownFor.map(m => {
+    if(cast) {
+        const knownFor = cast.department === 'Acting'? cast.castIn && cast.castIn.length? cast.castIn.map(m => {
+            return(
+                <div className='known-for' key={m.id} onClick={() => dispMovie(m.id)}>
+                    <img src={m.imgUrl} alt="poster" />
+                    <h6>{m.title}</h6>
+                </div>
+            )
+        }): null
+        : cast.crewIn && cast.crewIn.length ? cast.crewIn.map(m => {
             return(
                 <div className='known-for' key={m.id} onClick={() => dispMovie(m.id)}>
                     <img src={m.imgUrl} alt="poster" />
@@ -67,7 +79,7 @@ function CastComponent({id}) {
                                 <p><span className='text-warning'>Aliases:</span> {aliases || '-'}</p>
                             </div>
                         </div>
-                        <h4 className='text-warning'>Movie wall</h4>
+                        <h4 className='text-warning'>Movie Wall</h4>
                         <div className='movie-wall'>{knownFor || <p className=' text-muted font-italic'>none available</p>}</div>
                         <h4 className='text-warning'>Biography</h4>
                         <p style={{lineHeight:'1.6'}}>{cast.bio || <p className='text-muted font-italic'>no biography available</p>}</p>

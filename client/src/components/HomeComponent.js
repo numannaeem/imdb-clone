@@ -35,8 +35,8 @@ function HomeComponent(props) {
                                 </div>
                            </div>
                             <h1>or,</h1>
-                            <Form inline='true' onSubmit={(e) => search(e,homeSearchRef.current.value)}>
-                                <input ref={homeSearchRef} type='text' placeholder='Search for a movie...'/>
+                            <Form inline='true' style={{width:'70%',flexWrap:'nowrap', minWidth:'275px'}} onSubmit={(e) => search(e,homeSearchRef.current.value)}>
+                                <input ref={homeSearchRef} style={{width:'100%'}} type='text' placeholder='Search for movies or people'/>
                                 <button type='submit'><i className='fa fa-search'></i></button>
                             </Form>
                         </div>

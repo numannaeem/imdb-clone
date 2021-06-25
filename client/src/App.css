@@ -9,6 +9,39 @@
 }
 /*NAVBAR---------------------------------------------------------------*/
 
+.logo {
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: bold;
+  text-shadow: 0 0 rgb(22, 22, 22) ;
+  color: var(--secondary);
+  padding-right: 1rem;
+  border-right: 2px solid rgba(211, 211, 211, 0.438);
+}
+
+#navbar-search *{
+  background-color: transparent;
+  color: var(--secondary);
+}
+
+#navbar-search input {
+  border: 2px solid var(--secondary);
+  border-radius: 0.8rem;
+}
+
+#navbar-search input:focus {
+  box-shadow: 0 0 2px 2px rgb(255, 208, 0);
+}
+
+#navbar-search button{
+  margin-left: 2px;
+  border: 0px solid var(--secondary);
+  border-radius: 0.5rem;
+}
+
+#navbar-search ::placeholder {
+  color: rgba(255, 208, 0, 0.76);
+}
+
 .navbar-blue {
   background-color: hsl(266, 84%, 26%);
   box-shadow: 0 3px 7px 0 rgb(0 0 0/0.3);
@@ -86,7 +119,8 @@
 }
 
 .home-body input {
-  padding: 8px;
+  padding: 9px;
+  padding-left: 12px;
   border-radius: 1rem;
   background: transparent;
   color: var(--secondary);
@@ -95,6 +129,7 @@
 
 .home-body input:focus{
   outline: none;
+  box-shadow: 0 0 2px 2px rgba(255, 219, 101, 0.918);;
 }
 
 .home-body button {
@@ -105,7 +140,7 @@
 }
 
 .home-body ::placeholder {
-  color: var(--secondary) ;
+  color: rgba(255, 187, 0, 0.788) ;
 }
 /*FEED PAGE---------------------------------------------------------------*/
 
@@ -433,6 +468,11 @@ footer {
 /*MEDIA QUERIES---------------------------------------------------------------*/
 
 @media only screen and (max-width: 767px) {
+
+  .logo {
+    margin: 0;
+    border: none
+  }
 
   .navbar-link {
     background-color: transparent;

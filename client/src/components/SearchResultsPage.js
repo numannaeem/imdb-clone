@@ -99,7 +99,7 @@ function SearchResultsPage (props) {
         )
     }) : resultList.map(person => {
         return(
-            <Col xs={6} sm={6} md={4} lg={2} className='p-sm-3 p-2' key={person.id} onClick={() => dispPerson(person.id)}>
+            <Col xs={6} sm={4} md={3} lg={2} className='p-sm-3 p-2' key={person.id} onClick={() => dispPerson(person.id)}>
                <div className='person-card'>
                     <img src={person.imgUrl} alt='poster'/>
                     <div className='person-card-details'>

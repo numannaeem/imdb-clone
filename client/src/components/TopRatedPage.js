@@ -92,7 +92,7 @@ function TopRatedPage(props) {
                     </div>
                 </div>
                 <Row className='mb-5'>
-                    {!error ? !loading? movieCards : <LoadingComponent page='feed' /> : <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error}<br />Try again later</h3>}
+                    {loading ? <LoadingComponent page='feed' /> : error ?  <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error}<br />Try again later</h3>: movieCards && movieCards.length? movieCards : <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>Something went wrong<br />Try again later</h3>}
                 </Row>
                 <div className='text-center mb-5'>
                     <ButtonGroup>
