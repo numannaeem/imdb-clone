@@ -62,7 +62,7 @@ function MovieComponent({id}) {
                             name: c.name, 
                             pictureUrl: c.profile_path ? `https://image.tmdb.org/t/p/w185/${c.profile_path}` : 'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png', 
                             character:c.character
-                        })) : null,
+                        })) : [],
                         producers: data.crew? data.crew.filter(c => c.job === "Producer").map(c => c.name): null,
                         directors: data.crew? data.crew.filter(c => c.job === "Director").map(c => c.name):null
                     }
@@ -99,7 +99,7 @@ function MovieComponent({id}) {
             return (
                 <div className='cast-card' key={c.id} onClick={() => dispCast(c.id)}>
                     <img src={c.pictureUrl} alt='actor' />
-                    <div className='px-2 py-1' style={{height:'max-content'}}>
+                    <div className='px-2 pb-1 pt-2' style={{height:'max-content'}}>
                         <h5>{c.name}</h5>
                         <h6 className='font-weight-light'>as {c.character || '-'}</h6>
                     </div>
@@ -132,14 +132,14 @@ function MovieComponent({id}) {
                         <Row>
                             <Col xs className='mb-3'>
                                 <h3 className='movie-page-heading'>Overview</h3>
-                                 <p>{movie.description}</p>
+                                 <p>{movie.description || <span className='font-italic text-muted'>no overview available</span>}</p>
                             </Col>
                         </Row>
                         <Row>
                             <Col xs className='mb-3'>
                                 <h3 className='movie-page-heading'>Top Cast Cembers</h3>
                                 <div className='cast-feed'>
-                                    {error.feed ? <h5 className='text-italic text-muted'>Couldn't fetch the cast.<br />Try again later.</h5> : cast || <LoadingComponent page="cast-feed" />}
+                                    {error.feed ? <p className='text-italic text-muted font-italic'>Couldn't fetch the cast.<br />Try again later.</p> : cast? cast.length? cast : <p className='text-muted font-italic'>cast details unavailable</p>: <LoadingComponent page="cast-feed" />}
                                 </div>
                             </Col>
                         </Row>

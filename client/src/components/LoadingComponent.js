@@ -60,7 +60,7 @@ export default function LoadingComponent({page}) {
                     <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center feed-skeleton'>
                         <Skeleton height="100%"/>
                     </Col>
-                    <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center feed-skeleton'>               
+                    <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 mb-5 text-center feed-skeleton'>               
                         <Skeleton height="100%"/>        
                     </Col>
                 </>

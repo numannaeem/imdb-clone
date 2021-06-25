@@ -8,7 +8,7 @@ function UpcomingPage(props) {
 
     const [movieList,setMovieList] = useState(null)
     const [totalPages, setTotalPages] = useState(0)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
     const history = useHistory();
@@ -56,9 +56,9 @@ function UpcomingPage(props) {
                 setTotalPages(data.total_pages)
                 setMovieList(filteredMovies)
             })
-            .then(() => setLoading(false))
+            .then(setTimeout(() => setLoading(false), 400))
             .catch((err) => setError(err.message))
-    },[props.page, history, totalPages])
+    },[props.page, history])
 
     const movieCards = movieList? movieList.map(movie => {
         return(
@@ -71,7 +71,7 @@ function UpcomingPage(props) {
                             <span className='ml-2' style={{color:'lightgray'}}>{movie.releaseDate || ''}</span>
                         </div>
                     </div>
-                    <img src={movie.imgUrl} alt='poster'/>
+                    <img src={movie.imgUrl} alt='poster' height='300px' width='238px'/>
                </div>
             </Col>
         )
@@ -92,10 +92,10 @@ function UpcomingPage(props) {
                         </ButtonGroup>
                     </div>
                 </div>
-                <Row>
+                <Row className='mb-5'>
                 {!error ? !loading? movieCards : <LoadingComponent page='feed' /> : <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error}<br />Try again later</h3>}
                 </Row>
-                <div className='text-center my-4'>
+                <div className='text-center mb-5'>
                     <ButtonGroup>
                         <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
                         <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('prev')}><i className='fa fa-angle-left'></i></Button>

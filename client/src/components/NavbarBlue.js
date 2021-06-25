@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Navbar, Nav, Form, Button, InputGroup } from 'react-bootstrap';
 import { useHistory, withRouter } from 'react-router';
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 function NavbarBlue(props) {
 
@@ -20,13 +20,13 @@ function NavbarBlue(props) {
 
   return (
     <Navbar className='navbar-blue' variant='dark' expand='md' sticky='top' expanded={expanded}>
-      <Navbar.Brand href='/home'>🎬 NMDb</Navbar.Brand>
+      <Navbar.Brand href='/home'>🎬 NuMDb</Navbar.Brand>
       <Navbar.Toggle onClick={() => setExpanded((prev) => !prev)} />
       <Navbar.Collapse id='navbar-main'>
         <Nav className='mr-auto'>
-          <Link onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/popular/1">Popular</Link>
-          <Link onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/top-rated/1">Top Rated</Link>
-          <Link onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/upcoming/1">Upcoming</Link>
+          <NavLink activeClassName="navbar-link-active" onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/popular">Popular</NavLink>
+          <NavLink activeClassName="navbar-link-active" onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/top-rated">Top Rated</NavLink>
+          <NavLink activeClassName="navbar-link-active" onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/upcoming">Upcoming</NavLink>
         </Nav>
         <Form onSubmit={(e) => search(e,searchRef.current.value)}>
           <InputGroup style={{maxWidth:"250px"}} >
