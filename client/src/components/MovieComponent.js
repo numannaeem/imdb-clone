@@ -45,9 +45,9 @@ function MovieComponent({id}) {
                     backdropUrl: `https://image.tmdb.org/t/p/w1280/${data.backdrop_path}`
                 }
                 setMovie(filteredMovie)
-                setLoading(false)
                 return fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
             })
+            .then(setTimeout(() => setLoading(false), 200))
             .then(res => {
                 if (!res.ok)
                     throw new Error({type:"feed",message:"Server error"})

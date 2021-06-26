@@ -34,6 +34,8 @@ function UpcomingPage(props) {
 
     useEffect(() => {
         window.scrollTo(0, 0)
+        setMovieList(null)
+        setError('')
         setLoading(true)
         fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=${props.page}`)
             .then((res) => {
@@ -43,7 +45,6 @@ function UpcomingPage(props) {
                     return res.json()
                 })    
             .then(data => {
-                console.log(data)
                 const options = { year: 'numeric', month: 'long', day: 'numeric' }
                 const filteredMovies = data.results ? data.results.map((movie) => ({
                     id: movie.id,
@@ -93,7 +94,11 @@ function UpcomingPage(props) {
                     </div>
                 </div>
                 <Row className='mb-5'>
-                {loading ? <LoadingComponent page='feed' /> : error ?  <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error}<br />Try again later</h3>: movieCards && movieCards.length? movieCards : <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>Something went wrong<br />Try again later</h3>}
+                { loading ? <LoadingComponent page='feed' /> 
+                : error ?  <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error}<br />Try again later</h3>
+                : movieCards && movieCards.length? movieCards 
+                : <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>Something went wrong<br />Try again later</h3>
+                }
                 </Row>
                 <div className='text-center mb-5'>
                     <ButtonGroup>

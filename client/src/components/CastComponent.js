@@ -23,6 +23,7 @@ function CastComponent({id}) {
                 const filteredCast = {
                     name: data.name,
                     birthday: data.birthday ? new Date(data.birthday).toLocaleDateString('en-US',options): null,
+                    deathday: data.deathday ? new Date(data.deathday).toLocaleDateString('en-US',options): null,
                     pictureUrl: data.profile_path ? `https://image.tmdb.org/t/p/h632/${data.profile_path}` : 'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png',
                     bio: data.biography,
                     birthplace: data.place_of_birth,
@@ -35,19 +36,26 @@ function CastComponent({id}) {
             })
             .then(res => res.json())
             .then(data => {
-                const castIn = data.cast ? data.cast.map(m => ({
+                let castIn = data.cast ? data.cast.map(m => ({
                     title: m.title, 
                     id: m.id, 
                     imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w92/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png'
                 })): []
-                const crewIn = data.crew ? data.crew.map(m => ({
+                let crewIn = data.crew ? data.crew.map(m => ({
                     title: m.title, 
                     id: m.id, 
                     imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w92/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png'
                 })): []
-                setCast(prev => ({...prev, castIn, crewIn}))
+                let uniqueCastIn = castIn.filter((movie,i) => {
+                    return castIn.findIndex(m => m.id === movie.id) === i;
+                })
+                let uniqueCrewIn = crewIn.filter((movie,i) => {
+                    return crewIn.findIndex(m => m.id === movie.id) === i;
+                })
+                setCast(prev => ({...prev, castIn: uniqueCastIn, crewIn: uniqueCrewIn}))
             })       
     }, [id])
+
     if(cast) {
         const knownFor = cast.department === 'Acting'? cast.castIn && cast.castIn.length? cast.castIn.map(m => {
             return(
@@ -75,6 +83,7 @@ function CastComponent({id}) {
                             <div className='cast-details'>
                                 <h1 className='font-weight-bold'>{cast.name}</h1>
                                 {cast.birthday ? <h5>Born on {cast.birthday} in {cast.birthplace || '-'} {cast.age ? <span className='text-muted '>({cast.age} years old)</span> : null}</h5> : null}
+                                {cast.deathday ? <h5 className='text-muted'>Died on {cast.deathday}</h5>:null}
                                 <p><span className='text-warning'>Known for:</span> {cast.department || '-'}</p>
                                 <p><span className='text-warning'>Aliases:</span> {aliases || '-'}</p>
                             </div>

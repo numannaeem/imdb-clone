@@ -4,13 +4,12 @@ import { useHistory, useLocation } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
 import LoadingComponent from "./LoadingComponent";
 
-function SearchResultsPage (props) {
+function SearchResultsPage ({search, setSearch}) {
     const [resultList,setResultList] = useState(null)
     const [totalResults, setTotalResults] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
-    const [searchType, setSearchType] = useState('movie')
 
     const history = useHistory();
     const query = new URLSearchParams(useLocation().search)
@@ -44,8 +43,10 @@ function SearchResultsPage (props) {
     
     useEffect(() => {
         setLoading(true)
-        if(queryText)
-            fetch(`https://api.themoviedb.org/3/search/${searchType}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&query=${queryText}&page=${queryPage}&include_adult=false`)
+        setResultList(null)
+        setError('')
+        if(queryText) {
+            fetch(`https://api.themoviedb.org/3/search/${search}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&query=${queryText}&page=${queryPage}&include_adult=false`)
                 .then(res => {
                     if(res.ok)
                         return res.json()
@@ -56,7 +57,7 @@ function SearchResultsPage (props) {
                     setTotalPages(data.total_pages)
                     if (data.total_pages < queryPage)
                         history.push(`/search?query=${queryText}&page=1`)
-                    else if(searchType === 'person') {
+                    else if(search === 'person') {
                         const filteredResults = data.results.map((person) => ({
                             id:person.id,
                             name:person.name,
@@ -78,11 +79,12 @@ function SearchResultsPage (props) {
                         setResultList(filteredMovies)
                     }
                 })
-                .then(setTimeout(() => setLoading(false), 400))
+                .then(setTimeout(() => setLoading(false), 300))
                 .catch(err => setError(err.message))
-    },[queryText, queryPage, searchType, history])
+            }
+    },[queryText, queryPage, search, history])
 
-    const movieCards = resultList ? searchType==='movie' ? resultList.map(movie => {
+    const resultCards = resultList ? search==='movie' ? resultList.map(movie => {
         return(
             <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center' key={movie.id} onClick={() => dispMovie(movie.id)}>
                <div className='movie-card'>
@@ -113,7 +115,7 @@ function SearchResultsPage (props) {
 
     function handleChange(e) {
         setResultList(null)
-        setSearchType(e.target.value)
+        setSearch(e.target.value)
     }
 
     if(queryText)
@@ -124,10 +126,10 @@ function SearchResultsPage (props) {
                         <h1>Search Results</h1>
                         <div className='search-type'>
                             <ButtonGroup toggle>
-                                <ToggleButton id="movie" checked={searchType === 'movie'} value='movie' onChange={(e) => handleChange(e)} type="radio" >
+                                <ToggleButton id="movie" checked={search === 'movie'} value='movie' onChange={(e) => handleChange(e)} type="radio" >
                                     Movies
                                 </ToggleButton>
-                                <ToggleButton id="person" checked={searchType === 'person'} value='person' onChange={(e) => handleChange(e)} type="radio" >
+                                <ToggleButton id="person" checked={search === 'person'} value='person' onChange={(e) => handleChange(e)} type="radio" >
                                     People
                                 </ToggleButton>
                             </ButtonGroup>
@@ -143,8 +145,12 @@ function SearchResultsPage (props) {
                             <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('last')}><i className='fa fa-angle-double-right'></i></Button>
                         </ButtonGroup>
                     </div> : null}
-                    <Row className='mb-5'>
-                        {error? <h2 className='mx-auto my-5 text-muted' style={{height:'50vh'}}>{error}<br />Please try again later.</h2> : loading? <LoadingComponent page="feed" /> : resultList && resultList.length ? movieCards : <h2 className='mx-auto my-5 text-muted' style={{height:'50vh'}}>No results</h2>}
+                    <Row className='mb-5 justify-content-center'>
+                        { loading? <LoadingComponent page="feed" /> 
+                        : error? <h2 className='mx-auto my-5 text-muted text-center' style={{height:'50vh'}}>{error}<br />Please try again later.</h2>
+                        : resultCards && resultCards.length ? resultCards 
+                        : <h2 className='mx-auto my-5 text-muted' style={{height:'50vh'}}>No results</h2>
+                        }
                     </Row>
                     {totalPages > 1? <div className='text-center mb-5'>
                         <ButtonGroup>

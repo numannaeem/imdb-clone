@@ -9,9 +9,11 @@ import SearchResultsPage from './components/SearchResultsPage';
 import NavbarBlue from './components/NavbarBlue';
 import Footer from './components/FooterComponent';
 import CastComponent from './components/CastComponent';
+import { useState } from 'react';
 
 function App() {
 
+  const [search, setSearch] = useState('movie')
   return (
     <BrowserRouter>
       <NavbarBlue />
@@ -23,7 +25,7 @@ function App() {
         <Route path='/popular/:page' component={({match}) => <PopularPage page={match.params.page} />} />
         <Route path='/top-rated/:page' component={({match}) => <TopRatedPage page={match.params.page} />} />
         <Route path='/upcoming/:page' component={({match}) => <UpcomingPage page={match.params.page} />} />
-        <Route path='/search' component={() => <SearchResultsPage  />} />
+        <Route path='/search' component={() => <SearchResultsPage search={search} setSearch={(type) => setSearch(type)} />} />
         <Route path='/movie/:id' component={({match}) => <MovieComponent id={match.params.id} />} />
         <Route path='/cast/:id' component={({match}) => <CastComponent id={match.params.id} />} />
         <Redirect to='/home' />
