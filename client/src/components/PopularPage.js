@@ -8,7 +8,6 @@ function PopularPage(props) {
 
     const [movieList,setMovieList] = useState(null)
     const [totalPages, setTotalPages] = useState(0)
-    const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
     const history = useHistory();
@@ -36,7 +35,6 @@ function PopularPage(props) {
         window.scrollTo(0, 0)
         setMovieList(null)
         setError('')
-        setLoading(true)
         fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=${props.page}`)
             .then((res) => {
                 if(!res.ok)
@@ -57,11 +55,10 @@ function PopularPage(props) {
                 setTotalPages(data.total_pages)
                 setMovieList(filteredMovies)
             })
-            .then(setTimeout(() => setLoading(false), 400))
-            .catch((err) => setError(err.message))
+            .catch(err => setError(err.message))
     },[props.page, history])
 
-    const movieCards = movieList? movieList.map(movie => {
+    const movieCards = movieList?.map(movie => {
         return(
             <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center' key={movie.id} onClick={() => dispMovie(movie.id)}>
                <div className='movie-card'>
@@ -76,7 +73,7 @@ function PopularPage(props) {
                </div>
             </Col>
         )
-    }) : null
+    })
 
     return(
         <SkeletonTheme color="#505050" highlightColor="#303030" >
@@ -94,10 +91,9 @@ function PopularPage(props) {
                     </div>
                 </div>
                 <Row className='mb-5'>
-                    { loading ? <LoadingComponent page='feed' /> 
-                    : error ?  <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error}<br />Try again later</h3>
-                    : movieCards && movieCards.length? movieCards 
-                    : <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>Something went wrong<br />Try again later</h3>
+                    { movieCards && movieCards.length ? movieCards 
+                    : error ? <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error || "Something went wrong"}<br />Try again later</h3>
+                    : <LoadingComponent page='feed' /> 
                     }     
                 </Row>
                 <div className='text-center mb-5'>

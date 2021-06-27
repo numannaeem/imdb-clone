@@ -1,6 +1,6 @@
-function Footer(props) {
+function Footer() {
     return(
-        <footer className='p-3'>
+        <footer className='p-5'>
             <h5>Website designed by Numan Naeem</h5>
             <div className='footer-icons'>
                 <a href="https://www.instagram.com/num4n_/" target='blank'>

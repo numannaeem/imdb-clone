@@ -16,9 +16,10 @@ function CastComponent({id}) {
     useEffect(() => {
         window.scrollTo(0,0)
         let today = new Date().toISOString().substr(0,10)
-        fetch(`https://api.themoviedb.org/3/person/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
+        fetch(`https://api.themoviedb.org/3/person/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=movie_credits`)
             .then(res => res.json())
             .then(data => {
+                console.log(data.movie_credits)
                 const options = {year: 'numeric', month: 'long', day: 'numeric' }
                 const filteredCast = {
                     name: data.name,
@@ -29,50 +30,30 @@ function CastComponent({id}) {
                     birthplace: data.place_of_birth,
                     aliases: data.also_known_as,
                     department: data.known_for_department,
-                    age: data.birthday && !data.deathday ? Math.floor((new Date(today) - new Date(data.birthday))/(1000*24*60*60*365)): null
+                    age: data.birthday && !data.deathday ? Math.floor((new Date(today) - new Date(data.birthday))/(1000*24*60*60*365)): null,
+                    knownFor: data.known_for_department === 'Acting' ? data.movie_credits.cast?.map(m => ({
+                        title: m.title, 
+                        id: m.id, 
+                        imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w92/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png'
+                    })) : data.movie_credits.crew?.map(m => ({
+                        title: m.title, 
+                        id: m.id, 
+                        imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w92/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png'
+                    }))
                 }
                 setCast(filteredCast)
-                return fetch(`https://api.themoviedb.org/3/person/${id}/movie_credits?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
-            })
-            .then(res => res.json())
-            .then(data => {
-                let castIn = data.cast ? data.cast.map(m => ({
-                    title: m.title, 
-                    id: m.id, 
-                    imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w92/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png'
-                })): []
-                let crewIn = data.crew ? data.crew.map(m => ({
-                    title: m.title, 
-                    id: m.id, 
-                    imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w92/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png'
-                })): []
-                let uniqueCastIn = castIn.filter((movie,i) => {
-                    return castIn.findIndex(m => m.id === movie.id) === i;
-                })
-                let uniqueCrewIn = crewIn.filter((movie,i) => {
-                    return crewIn.findIndex(m => m.id === movie.id) === i;
-                })
-                setCast(prev => ({...prev, castIn: uniqueCastIn, crewIn: uniqueCrewIn}))
-            })       
+            }) 
     }, [id])
 
     if(cast) {
-        const knownFor = cast.department === 'Acting'? cast.castIn && cast.castIn.length? cast.castIn.map(m => {
+        const knownFor = cast.knownFor?.filter((movie,i) => cast.knownFor.findIndex(m => m.id === movie.id) === i).map(m => {
             return(
                 <div className='known-for' key={m.id} onClick={() => dispMovie(m.id)}>
-                    <img src={m.imgUrl} alt="poster" />
+                    <img src={m.imgUrl} alt="poster" height='100px' width='100px'/>
                     <h6>{m.title}</h6>
                 </div>
             )
-        }): null
-        : cast.crewIn && cast.crewIn.length ? cast.crewIn.map(m => {
-            return(
-                <div className='known-for' key={m.id} onClick={() => dispMovie(m.id)}>
-                    <img src={m.imgUrl} alt="poster" />
-                    <h6>{m.title}</h6>
-                </div>
-            )
-        }): null
+        })
         const aliases = cast.aliases && cast.aliases.length? cast.aliases.map((a,idx) => idx !== cast.aliases.length - 1 ? a + ' • ' : a) : null
         return(
             <Container>
@@ -91,7 +72,7 @@ function CastComponent({id}) {
                         <h4 className='text-warning'>Movie Wall</h4>
                         <div className='movie-wall'>{knownFor || <p className=' text-muted font-italic'>none available</p>}</div>
                         <h4 className='text-warning'>Biography</h4>
-                        <p style={{lineHeight:'1.6'}}>{cast.bio || <p className='text-muted font-italic'>no biography available</p>}</p>
+                        <p style={{lineHeight:'1.6'}}>{cast.bio || <span className='text-muted font-italic'>no biography available</span>}</p>
                     </Col>
                 </Row>
             </Container>

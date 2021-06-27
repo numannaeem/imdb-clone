@@ -7,7 +7,6 @@ import LoadingComponent from "./LoadingComponent";
 function MovieComponent({id}) {
 
     const [movie, setMovie] = useState(null)
-    const [loading,setLoading] = useState(true)
     const [error,setError] = useState({
         main: '',
         cast: ''
@@ -21,7 +20,7 @@ function MovieComponent({id}) {
 
     useEffect(() => {
         window.scrollTo(0,0)
-        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
+        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits`)
             .then(res => {
                 if(!res.ok)
                     throw new Error({type:"main",message:"Server error"})
@@ -42,34 +41,17 @@ function MovieComponent({id}) {
                     rating: data.vote_average,
                     language: data.original_language,
                     imgUrl: data.poster_path ? `https://image.tmdb.org/t/p/w342/${data.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
-                    backdropUrl: `https://image.tmdb.org/t/p/w1280/${data.backdrop_path}`
+                    backdropUrl: `https://image.tmdb.org/t/p/w1280/${data.backdrop_path}`,
+                    cast: data.credits.cast ? data.credits.cast.slice(0,20).map(c =>  ({
+                        id: c.id,
+                        name: c.name, 
+                        pictureUrl: c.profile_path ? `https://image.tmdb.org/t/p/w185/${c.profile_path}` : 'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png', 
+                        character:c.character
+                    })) : []
                 }
                 setMovie(filteredMovie)
-                return fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
-            })
-            .then(setTimeout(() => setLoading(false), 300))
-            .then(res => {
-                if (!res.ok)
-                    throw new Error({type:"feed",message:"Server error"})
-                else return res.json()
-            })
-            .then(data => {
-                setMovie(prevState => {
-                    return {
-                        ...prevState,
-                        cast: data.cast ? data.cast.slice(0,20).map(c =>  ({
-                            id: c.id,
-                            name: c.name, 
-                            pictureUrl: c.profile_path ? `https://image.tmdb.org/t/p/w185/${c.profile_path}` : 'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png', 
-                            character:c.character
-                        })) : [],
-                        producers: data.crew? data.crew.filter(c => c.job === "Producer").map(c => c.name): null,
-                        directors: data.crew? data.crew.filter(c => c.job === "Director").map(c => c.name):null
-                    }
-                })
             })
             .catch(err => {
-                setLoading(false)
                 if(err.type === 'main')
                     setError({main: err.message, feed: ''})
                 else 
@@ -80,14 +62,6 @@ function MovieComponent({id}) {
     if(error.main) {
         return(
             <h3 className='text-muted text-center' style={{margin:'15% auto', minHeight:'50vh'}}>{error}<br />Try again</h3>
-        )
-    }
-
-    if(loading) {
-        return (
-            <SkeletonTheme color="#505050" highlightColor="#303030">
-                <LoadingComponent page="movie" />
-            </SkeletonTheme>
         )
     }
 
@@ -139,7 +113,7 @@ function MovieComponent({id}) {
                             <Col xs className='mb-3'>
                                 <h3 className='movie-page-heading'>Top Cast Cembers</h3>
                                 <div className='cast-feed'>
-                                    {error.feed ? <p className='text-italic text-muted font-italic'>Couldn't fetch the cast.<br />Try again later.</p> : cast? cast.length? cast : <p className='text-muted font-italic'>cast details unavailable</p>: <LoadingComponent page="cast-feed" />}
+                                    {error.feed ? <p className='text-italic text-muted font-italic'>Couldn't fetch the cast.<br />Try again later.</p> : cast && cast.length? cast : <p className='text-muted font-italic'>cast details unavailable</p>}
                                 </div>
                             </Col>
                         </Row>
@@ -154,7 +128,11 @@ function MovieComponent({id}) {
         )
     }
 
-    return null;
+    return (
+        <SkeletonTheme color="#505050" highlightColor="#303030">
+            <LoadingComponent page="movie" />
+        </SkeletonTheme>
+    )
 }
 
 export default MovieComponent
