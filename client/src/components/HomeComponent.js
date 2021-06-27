@@ -1,11 +1,14 @@
 import { useRef } from "react";
 import { Row, Col, Container, Form } from "react-bootstrap"
 import { Link, useHistory } from "react-router-dom"
+import Lottie from 'react-lottie';
+import animationData from '../clipboardAnimation.json'
 
 function HomeComponent(props) {
 
     const homeSearchRef = useRef('')
     const history = useHistory();
+    const lottieRef = useRef(null)
 
     const search = (e,query) => {
         e.preventDefault()
@@ -16,14 +19,28 @@ function HomeComponent(props) {
         }
     }
 
+    const defaultOptions = {
+        loop: true,
+        autoplay: false,
+        animationData: animationData,
+        rendererSettings: {
+          preserveAspectRatio: "xMidYMid slice"
+        }
+      };
+
     return(
         <>
             <div className='home-header'> 
-                <h1>Welcome.</h1>
-                <h2 className='font-weight-light'>the movie database for all your movie needs!</h2>
+            <div className='d-md-flex'>
+                <div onMouseEnter={() => lottieRef?.current?.handleClickToPause?.()} onMouseLeave={() => lottieRef?.current?.handleClickToPause?.()} >
+                    <Lottie style={{filter:" drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))"}} options={defaultOptions} width={100} ref={lottieRef} isClickToPauseDisabled />
+                </div>
+                <h1 className='m-0 w-0 align-self-center'>NuMDb</h1>
+            </div>
+                    <h2 className='font-weight-light'>the movie database for all your movie needs!</h2>
             </div>
             <Container>
-                <Row>
+                <Row className='my-5'>
                     <Col xs>
                         <div className='home-body'>
                            <div>
