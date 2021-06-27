@@ -26,7 +26,7 @@ function HomeComponent(props) {
         rendererSettings: {
           preserveAspectRatio: "xMidYMid slice"
         }
-      };
+    };
 
     return(
         <>

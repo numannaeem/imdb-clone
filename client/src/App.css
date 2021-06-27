@@ -164,6 +164,7 @@
 }
 
 .movie-card {
+  box-shadow: inset 0px 0px 2px 2px rgb(114, 114, 114);
   cursor: pointer;
   overflow: hidden;
   height: 100%;
@@ -474,6 +475,26 @@ footer {
 .footer-icons a:hover span{
   color: rgb(32, 7, 37);
   transform: rotate(360deg);
+}
+
+/*GENERAL STYLES---------------------------------------------------------------*/
+
+.watchlist-button {
+  padding: 0.3rem 0.6rem;
+  padding-left: 0.3rem;
+  border-radius: 0.8rem;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--black);
+  color: white;
+  transition: background-color 200ms ease;
+  width: fit-content;
+}
+
+.watchlist-button:hover {
+  background-color: rgb(22, 22, 22);
 }
 
 /*MEDIA QUERIES---------------------------------------------------------------*/

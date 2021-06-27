@@ -3,6 +3,7 @@ import { Col, Container, Row } from 'react-bootstrap'
 import { useHistory } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
 import LoadingComponent from "./LoadingComponent";
+import { AddButton, DeleteButton } from "./watchlistButtons";
 
 function MovieComponent({id}) {
 
@@ -11,6 +12,7 @@ function MovieComponent({id}) {
         main: '',
         cast: ''
     })
+    const [inWatchlist, setInWatchlist] = useState(Boolean(localStorage.getItem(`mId:${id}`)))
 
     const history = useHistory()
 
@@ -32,9 +34,9 @@ function MovieComponent({id}) {
                     title: data.original_title,
                     description: data.overview,
                     imdbUrl: data.homepage,
-                    genres: data.genres ? data.genres.map(genre => genre.name):null,
+                    genres: data.genres?.map(genre => genre.name),
                     budget: data.budget,
-                    releaseDate: data.release_date? new Date(data.release_date).toLocaleDateString('en-UK',options) : null,
+                    releaseDate: data.release_date? new Date(data.release_date).toLocaleDateString('en-US',options) : null,
                     revenue: data.revenue,
                     runtime: data.runtime,
                     tagline: data.tagline,
@@ -42,12 +44,15 @@ function MovieComponent({id}) {
                     language: data.original_language,
                     imgUrl: data.poster_path ? `https://image.tmdb.org/t/p/w342/${data.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
                     backdropUrl: `https://image.tmdb.org/t/p/w1280/${data.backdrop_path}`,
-                    cast: data.credits.cast ? data.credits.cast.slice(0,20).map(c =>  ({
+                    cast: data.credits.cast?.slice(0,20).map(c =>  ({
                         id: c.id,
                         name: c.name, 
                         pictureUrl: c.profile_path ? `https://image.tmdb.org/t/p/w185/${c.profile_path}` : 'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png', 
                         character:c.character
-                    })) : []
+                    })),
+                    producers: data.credits.crew?.filter(c => c.job === "Producer").map(c => c.name),
+                    directors: data.credits.crew?.filter(c => c.job === "Director").map(c => c.name)
+
                 }
                 setMovie(filteredMovie)
             })
@@ -66,10 +71,10 @@ function MovieComponent({id}) {
     }
 
     if(movie) {
-        const genres = movie.genres ? movie.genres.map(g => <p className='genre-pill' key={g}>{g}</p>) : []     
-        const producers = movie.producers ? movie.producers.map((p, idx) => idx !== movie.producers.length - 1 ? p + ', ' : p) : []
-        const directors = movie.directors ? movie.directors.map((p, idx) => idx !== movie.directors.length - 1 ? p + ', ' : p) : []
-        const cast = movie.cast ? movie.cast.map(c => {
+        const genres = movie.genres?.map(g => <p className='genre-pill' key={g}>{g}</p>)    
+        const producers = movie.producers?.map((p, idx) => idx !== movie.producers.length - 1 ? p + ', ' : p)
+        const directors = movie.directors?.map((p, idx) => idx !== movie.directors.length - 1 ? p + ', ' : p)
+        const cast = movie.cast?.map(c => {
             return (
                 <div className='cast-card' key={c.id} onClick={() => dispCast(c.id)}>
                     <img src={c.pictureUrl} alt='actor' />
@@ -79,7 +84,7 @@ function MovieComponent({id}) {
                     </div>
                 </div>
             )
-        }) : null
+        })
         return(
             <div className='movie-page'>
                 <div className='movie-page-header' style={{backgroundImage:'linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),url('+ movie.backdropUrl + ')'}}>
@@ -92,13 +97,14 @@ function MovieComponent({id}) {
                         <p>{movie.language.toUpperCase()} • {movie.releaseDate || 'In Production'} {movie.runtime? <>• <i className='fas fa-clock'></i>{' '}{movie.runtime} mins</> : null}</p>
                         <div>
                             <b>Producer(s): </b>
-                            <p>{producers.length ? producers : '-'}</p>
+                            <p>{producers && producers.length? producers : '-'}</p>
                             <b>Director(s): </b>
-                            <p>{directors.length? directors : '-'}</p>
+                            <p>{directors && directors.length? directors : '-'}</p>
                         </div>
                         <p>
                             <b>Estimated Budget:</b> {movie.budget ? '$'+movie.budget.toLocaleString('en-UK') : '-'} | <b>Gross Revenue: </b>{movie.revenue ? '$'+movie.revenue.toLocaleString('en-UK') : '-'}
                         </p>
+                        {inWatchlist ? <DeleteButton movieId={id} onClick={() => setInWatchlist(false)}/> :<AddButton onClick={() => setInWatchlist(true)} movieId={id} name={JSON.stringify({title:movie.title, rating:movie.rating, imgUrl:movie.imgUrl, releaseDate:movie.releaseDate})}/>}
                     </div>
                 </div>
                 <div className='movie-page-body'>

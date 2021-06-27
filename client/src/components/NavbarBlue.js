@@ -27,6 +27,7 @@ function NavbarBlue(props) {
           <NavLink activeClassName="navbar-link-active" onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/popular">Popular</NavLink>
           <NavLink activeClassName="navbar-link-active" onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/top-rated">Top Rated</NavLink>
           <NavLink activeClassName="navbar-link-active" onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/upcoming">Upcoming</NavLink>
+          <NavLink activeClassName="navbar-link-active" onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/watchlist">My Watchlist</NavLink>
         </Nav>
         <Form onSubmit={(e) => search(e,searchRef.current.value)}>
           <InputGroup style={{maxWidth:"250px"}} id='navbar-search'>
