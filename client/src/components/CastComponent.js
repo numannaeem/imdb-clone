@@ -70,7 +70,7 @@ function CastComponent({id}) {
                             </div>
                         </div>
                         <h4 className='text-warning'>Movie Wall</h4>
-                        <div className='movie-wall'>{knownFor || <p className=' text-muted font-italic'>none available</p>}</div>
+                        <div className='movie-wall'>{knownFor && knownFor.length ? knownFor : <p className=' text-muted font-italic'>none available</p>}</div>
                         <h4 className='text-warning'>Biography</h4>
                         <p style={{lineHeight:'1.6'}}>{cast.bio || <span className='text-muted font-italic'>no biography available</span>}</p>
                     </Col>

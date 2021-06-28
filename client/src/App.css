@@ -389,6 +389,23 @@
   transform: scale(1.02);
 }
 
+.review-card {
+  white-space: pre-line;
+  background-color: rgb(32, 32, 32);
+  border: 2px solid rgb(207, 207, 207);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.review-card h5 {
+  color: rgb(255, 234, 190);
+}
+
+.review-card p{
+  line-height: 1.6rem;
+}
+
 /*CAST PAGE-------------------------------------------------------------------*/
 
 

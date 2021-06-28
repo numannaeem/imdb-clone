@@ -46,7 +46,7 @@ function PopularPage(props) {
                 const options = { year: 'numeric', month: 'long', day: 'numeric' }
                 const filteredMovies = data.results ? data.results.map((movie) => ({
                     id: movie.id,
-                    title: movie.original_title,
+                    title: movie.title,
                     description: movie.overview,
                     imgUrl: movie.poster_path ? `https://image.tmdb.org/t/p/w342/${movie.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
                     releaseDate: movie.release_date? new Date(movie.release_date).toLocaleDateString('en-US',options) : null,

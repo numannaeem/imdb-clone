@@ -53,6 +53,7 @@ function SearchResultsPage ({search, setSearch}) {
                     else throw new Error("Server down. Please try later.")
                 })
                 .then(data => {
+                    console.log(data)
                     setTotalResults(data.total_results)
                     setTotalPages(data.total_pages)
                     if (data.total_pages < queryPage)
@@ -70,7 +71,7 @@ function SearchResultsPage ({search, setSearch}) {
                         const options = {year: 'numeric', month: 'long', day: 'numeric' }
                         const filteredMovies = data.results.map((movie) => ({
                             id: movie.id,
-                            title: movie.original_title,
+                            title: movie.title,
                             description: movie.overview,
                             imgUrl: movie.poster_path ? `https://image.tmdb.org/t/p/w342/${movie.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
                             releaseDate: movie.release_date? new Date(movie.release_date).toLocaleDateString('en-UK',options) :null,

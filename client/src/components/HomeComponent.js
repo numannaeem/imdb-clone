@@ -20,8 +20,8 @@ function HomeComponent(props) {
     }
 
     const defaultOptions = {
-        loop: true,
-        autoplay: false,
+        loop: false,
+        autoplay: true,
         animationData: animationData,
         rendererSettings: {
           preserveAspectRatio: "xMidYMid slice"
@@ -32,7 +32,7 @@ function HomeComponent(props) {
         <>
             <div className='home-header'> 
             <div className='d-md-flex'>
-                <div onMouseEnter={() => lottieRef?.current?.handleClickToPause?.()} onMouseLeave={() => lottieRef?.current?.handleClickToPause?.()} >
+                <div>
                     <Lottie style={{filter:" drop-shadow( 3px 3px 2px rgba(0, 0, 0, .7))"}} options={defaultOptions} width={100} ref={lottieRef} isClickToPauseDisabled />
                 </div>
                 <h1 className='m-0 w-0 align-self-center'>NuMDb</h1>

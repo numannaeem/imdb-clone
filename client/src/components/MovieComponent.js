@@ -22,7 +22,7 @@ function MovieComponent({id}) {
 
     useEffect(() => {
         window.scrollTo(0,0)
-        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits`)
+        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits,reviews`)
             .then(res => {
                 if(!res.ok)
                     throw new Error({type:"main",message:"Server error"})
@@ -31,7 +31,7 @@ function MovieComponent({id}) {
             .then(data => {
                 const options = {year: 'numeric', month: 'long', day: 'numeric' }
                 const filteredMovie = {
-                    title: data.original_title,
+                    title: data.title,
                     description: data.overview,
                     imdbUrl: data.homepage,
                     genres: data.genres?.map(genre => genre.name),
@@ -51,7 +51,12 @@ function MovieComponent({id}) {
                         character:c.character
                     })),
                     producers: data.credits.crew?.filter(c => c.job === "Producer").map(c => c.name),
-                    directors: data.credits.crew?.filter(c => c.job === "Director").map(c => c.name)
+                    directors: data.credits.crew?.filter(c => c.job === "Director").map(c => c.name),
+                    reviews: data.reviews.results?.slice(0,3).map(r => ({
+                        content: r.content,
+                        author: r.author_details.name || r.author_details.username,
+                        rating: r.author_details.rating
+                    }))
 
                 }
                 setMovie(filteredMovie)
@@ -74,6 +79,15 @@ function MovieComponent({id}) {
         const genres = movie.genres?.map(g => <p className='genre-pill' key={g}>{g}</p>)    
         const producers = movie.producers?.map((p, idx) => idx !== movie.producers.length - 1 ? p + ', ' : p)
         const directors = movie.directors?.map((p, idx) => idx !== movie.directors.length - 1 ? p + ', ' : p)
+        const reviews = movie.reviews?.map(r => {
+            return(
+                <div className='review-card'>
+                    <h5>{r.author}  {r.rating? '| ⭐'+ r.rating : null}</h5>
+                    <hr style={{borderColor:'gray'}}/>
+                    <p className='font-weight-light'>{r.content}</p>
+                </div>
+            )
+        })
         const cast = movie.cast?.map(c => {
             return (
                 <div className='cast-card' key={c.id} onClick={() => dispCast(c.id)}>
@@ -115,20 +129,21 @@ function MovieComponent({id}) {
                         <Row>
                             <Col xs className='mb-3'>
                                 <h3 className='movie-page-heading'>Overview</h3>
-                                 <p>{movie.description || <span className='font-italic text-muted'>no overview available</span>}</p>
+                                <p>{movie.description || <span className='font-italic text-muted'>no overview available</span>}</p>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs className='mb-3'>
+                            <Col xs className='mb-5'>
                                 <h3 className='movie-page-heading'>Top Cast Cembers</h3>
                                 <div className='cast-feed'>
-                                    {error.feed ? <p className='text-italic text-muted font-italic'>Couldn't fetch the cast.<br />Try again later.</p> : cast && cast.length? cast : <p className='text-muted font-italic'>cast details unavailable</p>}
+                                   {cast && cast.length? cast : <p className='text-muted font-italic'>cast details unavailable</p>}
                                 </div>
                             </Col>
                         </Row>
                         <Row>
                             <Col xs className='mb-3'>
                                 <h3 className='movie-page-heading'>Reviews</h3>
+                                {reviews && reviews.length? reviews: <p className='text-muted font-italic'>reviews unavailable</p>}
                             </Col>
                         </Row>
                     </Container>
