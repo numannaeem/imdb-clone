@@ -28,7 +28,7 @@ function AddButton(props) {
             onMouseLeave={() => setPaused(true)}
             onClick={() => addToWatchList()} 
         >
-                <Lottie isPaused={paused} options={defaultOptions} width={45} height={45} isClickToPauseDisabled/>
+                <Lottie isStopped={paused} options={defaultOptions} width={38} height={38} isClickToPauseDisabled/>
             Add to watchlist
         </button>
     )
@@ -59,7 +59,7 @@ function DeleteButton(props) {
             onMouseLeave={() => setPaused(true)} 
             onClick={() => removeFromWatchList()} 
         >
-                <Lottie isPaused={paused} options={defaultOptions} width={45} height={45} isClickToPauseDisabled/>
+                <Lottie isStopped={paused} options={defaultOptions} width={38} height={38} isClickToPauseDisabled/>
             Remove from watchlist
         </button>
     )

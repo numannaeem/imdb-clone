@@ -4,15 +4,14 @@ import { useHistory } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
 import LoadingComponent from "./LoadingComponent";
 import { AddButton, DeleteButton } from "./watchlistButtons";
+import { languages } from '../shared/languages'
 
 function MovieComponent({id}) {
 
     const [movie, setMovie] = useState(null)
-    const [error,setError] = useState({
-        main: '',
-        cast: ''
-    })
+    const [error,setError] = useState(null)
     const [inWatchlist, setInWatchlist] = useState(Boolean(localStorage.getItem(`mId:${id}`)))
+    const [reviewFeedExpanded, setReviewFeedExpanded] = useState(false);
 
     const history = useHistory()
 
@@ -25,7 +24,7 @@ function MovieComponent({id}) {
         fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits,reviews`)
             .then(res => {
                 if(!res.ok)
-                    throw new Error({type:"main",message:"Server error"})
+                    throw new Error("Server error")
                 else return res.json()
             })
             .then(data => {
@@ -42,6 +41,7 @@ function MovieComponent({id}) {
                     tagline: data.tagline,
                     rating: data.vote_average,
                     language: data.original_language,
+                    companies:data.production_companies,
                     imgUrl: data.poster_path ? `https://image.tmdb.org/t/p/w342${data.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
                     backdropUrl: `https://image.tmdb.org/t/p/w1280${data.backdrop_path}`,
                     cast: data.credits.cast?.slice(0,20).map(c =>  ({
@@ -53,6 +53,7 @@ function MovieComponent({id}) {
                     producers: data.credits.crew?.filter(c => c.job === "Producer").map(c => c.name),
                     directors: data.credits.crew?.filter(c => c.job === "Director").map(c => c.name),
                     reviews: data.reviews.results?.slice(0,3).map(r => ({
+                        id:r.id,
                         content: r.content,
                         author: r.author_details.name || r.author_details.username,
                         rating: r.author_details.rating,
@@ -64,14 +65,12 @@ function MovieComponent({id}) {
                 setMovie(filteredMovie)
             })
             .catch(err => {
-                if(err.type === 'main')
-                    setError({main: err.message, feed: ''})
-                else 
-                    setError({main: '', feed: err.message})
+                if(err)
+                    setError(err.message)
             })
     },[id])
 
-    if(error.main) {
+    if(error) {
         return(
             <h3 className='text-muted text-center' style={{margin:'15% auto', minHeight:'50vh'}}>{error}<br />Try again</h3>
         )
@@ -83,7 +82,7 @@ function MovieComponent({id}) {
         const directors = movie.directors?.map((p, idx) => idx !== movie.directors.length - 1 ? p + ', ' : p)
         const reviews = movie.reviews?.map(r => {
             return(
-                <div className='review-card'>
+                <div className='review-card' key={r.id}>
                     <div className='d-flex align-items-center'>
                         <img src={r.profileUrl} height='45px' width='45px' alt={r.author}/>
                         <div className='ml-2'>
@@ -116,7 +115,7 @@ function MovieComponent({id}) {
                         <h5 className='font-weight-light font-italic'>{movie.tagline}</h5>
                         <div>{genres}</div>
                         <h5 className='my-2'>⭐ {movie.rating || 'NR'}</h5>
-                        <p>{movie.language.toUpperCase()} • {movie.releaseDate || 'In Production'} {movie.runtime? <>• <i className='fas fa-clock'></i>{' '}{movie.runtime} mins</> : null}</p>
+                        <p className='text-muted font-weight-bold'>{languages[movie.language].name} • {movie.releaseDate || 'In Production'} {movie.runtime? `• ${movie.runtime} mins` : null}</p>
                         <div>
                             <b>Producer(s): </b>
                             <p>{producers && producers.length? producers : '-'}</p>
@@ -150,8 +149,12 @@ function MovieComponent({id}) {
                         </Row>
                         <Row>
                             <Col xs className='mb-3'>
-                                <h3 className='movie-page-heading'>Reviews</h3>
-                                {reviews && reviews.length? reviews: <p className='text-muted font-italic'>reviews unavailable</p>}
+                                <h3 className='movie-page-heading mb-0'>Reviews</h3>
+                                <div className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px", overflowY:'hidden', position:'relative', borderRadius:"1rem"}}>
+                                    {reviews && reviews.length? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable</p>}
+                                    {!reviewFeedExpanded && reviews && reviews.length ? <div style={{height:"50%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.3), transparent)', width:'100%', bottom:'0'}} /> : null}
+                                </div>
+                                {reviews && reviews.length ? <p className='review-expand-btn' onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse ᐱ": "Read more ᐯ"}</p>:null}
                             </Col>
                         </Row>
                     </Container>

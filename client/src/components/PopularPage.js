@@ -69,7 +69,7 @@ function PopularPage(props) {
                             <span className='ml-2' style={{color:'lightgray'}}>{movie.releaseDate || ''}</span>
                         </div>
                     </div>
-                    <img src={movie.imgUrl} alt='poster' height='300px' width='238px'/>
+                    <img src={movie.imgUrl} alt='poster' height='379px' width='253px'/>
                </div>
             </Col>
         )

@@ -360,6 +360,7 @@
 
 .cast-feed {
   padding: 0.8rem;
+  padding-left: 0.2rem;
   overflow-x: auto;
   display: flex;
   align-items: stretch;
@@ -389,6 +390,11 @@
   transform: scale(1.02);
 }
 
+.review-feed {
+  position: relative;
+  transition: height 200ms;
+}
+
 .review-card {
   white-space: pre-line;
   word-wrap: break-word;
@@ -396,7 +402,7 @@
   border: 2px solid rgb(207, 207, 207);
   border-radius: 1rem;
   padding: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 .review-card img {
@@ -405,6 +411,21 @@
 
 .review-card h6{
   color: rgb(255, 234, 190);
+}
+
+.review-expand-btn {
+  cursor: pointer;
+  padding: 0.3rem;
+  text-align: center;
+  background-color: hsl(240, 32%, 39%);
+  color: white;
+  margin-top: 1rem;
+  border-radius: 1rem;
+  transition: background-color 150ms ease;
+}
+
+.review-expand-btn:hover {
+  background-color: hsl(240, 32%, 29%);
 }
 /*CAST PAGE-------------------------------------------------------------------*/
 
