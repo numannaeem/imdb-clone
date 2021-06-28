@@ -1,8 +1,15 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "start_url": ".",
+  "short_name": "NuMDb",
+  "name": "NuMDb - Movie Database",
+  "start_url": "index.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#3b0b7a",
+  "icons": [
+    {
+      "src":"./favicon.ico",
+      "sizes":"192x192",
+      "type":"icon"
+    }
+  ],
+  "background_color": "#1c1b30"
 }

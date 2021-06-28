@@ -42,12 +42,12 @@ function MovieComponent({id}) {
                     tagline: data.tagline,
                     rating: data.vote_average,
                     language: data.original_language,
-                    imgUrl: data.poster_path ? `https://image.tmdb.org/t/p/w342/${data.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
-                    backdropUrl: `https://image.tmdb.org/t/p/w1280/${data.backdrop_path}`,
+                    imgUrl: data.poster_path ? `https://image.tmdb.org/t/p/w342${data.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
+                    backdropUrl: `https://image.tmdb.org/t/p/w1280${data.backdrop_path}`,
                     cast: data.credits.cast?.slice(0,20).map(c =>  ({
                         id: c.id,
                         name: c.name, 
-                        pictureUrl: c.profile_path ? `https://image.tmdb.org/t/p/w185/${c.profile_path}` : 'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png', 
+                        pictureUrl: c.profile_path ? `https://image.tmdb.org/t/p/w185${c.profile_path}` : 'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png', 
                         character:c.character
                     })),
                     producers: data.credits.crew?.filter(c => c.job === "Producer").map(c => c.name),
@@ -55,7 +55,9 @@ function MovieComponent({id}) {
                     reviews: data.reviews.results?.slice(0,3).map(r => ({
                         content: r.content,
                         author: r.author_details.name || r.author_details.username,
-                        rating: r.author_details.rating
+                        rating: r.author_details.rating,
+                        profileUrl: r.author_details.avatar_path? r.author_details.avatar_path.substring(0,5) !== '/http' ? `https://image.tmdb.org/t/p/w45${r.author_details.avatar_path}` : r.author_details.avatar_path.substring(1) :'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png',
+                        date: r.created_at ? new Date(r.created_at).toLocaleDateString('en-US',options) : null
                     }))
 
                 }
@@ -82,8 +84,14 @@ function MovieComponent({id}) {
         const reviews = movie.reviews?.map(r => {
             return(
                 <div className='review-card'>
-                    <h5>{r.author}  {r.rating? '| ⭐'+ r.rating : null}</h5>
-                    <hr style={{borderColor:'gray'}}/>
+                    <div className='d-flex align-items-center'>
+                        <img src={r.profileUrl} height='45px' width='45px' alt={r.author}/>
+                        <div className='ml-2'>
+                            <h6>{r.author}</h6>
+                            <p className='font-weight-light mb-0' style={{fontSize:'95%'}}>{r.date}{r.rating? ' • ⭐'+ r.rating : null}</p>
+                        </div>
+                    </div>
+                    <hr style={{borderColor:'gray'}} className='mt-1'/>
                     <p className='font-weight-light'>{r.content}</p>
                 </div>
             )

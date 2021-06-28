@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Kumbh+Sans:wght@300;400;700&family=Pacifico&display=swap');
 
 :root {  
-  --primary: hsl(266, 84%, 26%);
+  --primary: #3b0b7a;
   --primary-light: rgb(156, 147, 235);
   --secondary: hsl(45, 100%, 51%);
   --black: hsl(210, 10%, 23%);
@@ -391,6 +391,7 @@
 
 .review-card {
   white-space: pre-line;
+  word-wrap: break-word;
   background-color: rgb(32, 32, 32);
   border: 2px solid rgb(207, 207, 207);
   border-radius: 1rem;
@@ -398,14 +399,13 @@
   margin-bottom: 1rem;
 }
 
-.review-card h5 {
+.review-card img {
+  border-radius: 50%;
+}
+
+.review-card h6{
   color: rgb(255, 234, 190);
 }
-
-.review-card p{
-  line-height: 1.6rem;
-}
-
 /*CAST PAGE-------------------------------------------------------------------*/
 
 
