@@ -483,11 +483,10 @@ footer {
   padding: 0.3rem 0.6rem;
   padding-left: 0.3rem;
   border-radius: 0.8rem;
-  border: none;
+  border: 2px solid;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: var(--black);
   color: white;
   transition: background-color 200ms ease;
   width: fit-content;
@@ -495,6 +494,16 @@ footer {
 
 .watchlist-button:hover {
   background-color: rgb(22, 22, 22);
+}
+
+.add-button {
+  border-color: rgb(0, 206, 0);
+  background-color: rgba(0, 100, 0, 0.301);
+}
+
+.delete-button {
+  border-color: rgb(206, 0, 0);
+  background-color: rgba(100, 0, 0, 0.301);
 }
 
 /*MEDIA QUERIES---------------------------------------------------------------*/

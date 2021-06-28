@@ -104,7 +104,10 @@ function MovieComponent({id}) {
                         <p>
                             <b>Estimated Budget:</b> {movie.budget ? '$'+movie.budget.toLocaleString('en-UK') : '-'} | <b>Gross Revenue: </b>{movie.revenue ? '$'+movie.revenue.toLocaleString('en-UK') : '-'}
                         </p>
-                        {inWatchlist ? <DeleteButton movieId={id} onClick={() => setInWatchlist(false)}/> :<AddButton onClick={() => setInWatchlist(true)} movieId={id} name={JSON.stringify({title:movie.title, rating:movie.rating, imgUrl:movie.imgUrl, releaseDate:movie.releaseDate})}/>}
+                        { inWatchlist ? <DeleteButton movieId={id} onClick={() => setInWatchlist(false)}/> 
+                        : <AddButton onClick={() => setInWatchlist(true)} movieId={id} 
+                            name={JSON.stringify({title:movie.title, rating:movie.rating, imgUrl:movie.imgUrl, releaseDate:movie.releaseDate})}
+                        />}
                     </div>
                 </div>
                 <div className='movie-page-body'>

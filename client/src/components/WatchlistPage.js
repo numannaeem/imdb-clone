@@ -43,12 +43,12 @@ function WatchlistPage(props) {
     })
 
     return(
-        <Container>
+        <Container className='pb-5'>
                 <div className='feed-page-header text-center my-5'>
                     <h1>My Watchlist</h1>
                 </div>
                 <Row className='mb-5'>
-                    {movieCards && movieCards.length ? movieCards : <h2 className='text-center w-100 text-muted my-5 mx-2'  style={{height:'50vh'}}>Go to a movie and click on "Add to watchlist" to see them here!</h2>}   
+                    {movieCards && movieCards.length ? movieCards : <h3 className='text-center w-100 text-muted my-5 mx-2' style={{height:'55vh'}}>Go to a movie and click on "Add to watchlist" to see them here!</h3>}   
                 </Row>
             </Container>
     )

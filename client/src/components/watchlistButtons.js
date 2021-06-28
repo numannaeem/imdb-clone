@@ -23,7 +23,7 @@ function AddButton(props) {
     };
 
     return(
-        <button className='watchlist-button' variant='outline-dark'
+        <button className='watchlist-button add-button' variant='outline-dark'
             onMouseEnter={() => setPaused(false)} 
             onMouseLeave={() => setPaused(true)}
             onClick={() => addToWatchList()} 
@@ -54,7 +54,7 @@ function DeleteButton(props) {
     };
 
     return(
-        <button className='watchlist-button' variant='outline-dark'
+        <button className='watchlist-button delete-button' variant='outline-dark'
             onMouseEnter={() => setPaused(false)} 
             onMouseLeave={() => setPaused(true)} 
             onClick={() => removeFromWatchList()} 
