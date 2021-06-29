@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from 'react-bootstrap'
 import { useHistory } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
 import LoadingComponent from "./LoadingComponent";
 import { AddButton, DeleteButton } from "./watchlistButtons";
 import { languages } from '../shared/languages'
+import YoutubeEmbed from "./YoutubeEmbed";
 
 function MovieComponent({id}) {
 
@@ -12,6 +13,7 @@ function MovieComponent({id}) {
     const [error,setError] = useState(null)
     const [inWatchlist, setInWatchlist] = useState(Boolean(localStorage.getItem(`mId:${id}`)))
     const [reviewFeedExpanded, setReviewFeedExpanded] = useState(false);
+    const reviewFeedRef = useRef(null)
 
     const history = useHistory()
 
@@ -21,7 +23,7 @@ function MovieComponent({id}) {
 
     useEffect(() => {
         window.scrollTo(0,0)
-        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits,reviews`)
+        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits,reviews,videos`)
             .then(res => {
                 if(!res.ok)
                     throw new Error("Server error")
@@ -41,6 +43,7 @@ function MovieComponent({id}) {
                     tagline: data.tagline,
                     rating: data.vote_average,
                     language: data.original_language,
+                    voteCount: data.vote_count,
                     companies:data.production_companies,
                     imgUrl: data.poster_path ? `https://image.tmdb.org/t/p/w342${data.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
                     backdropUrl: `https://image.tmdb.org/t/p/w1280${data.backdrop_path}`,
@@ -59,9 +62,11 @@ function MovieComponent({id}) {
                         rating: r.author_details.rating,
                         profileUrl: r.author_details.avatar_path? r.author_details.avatar_path.substring(0,5) !== '/http' ? `https://image.tmdb.org/t/p/w45${r.author_details.avatar_path}` : r.author_details.avatar_path.substring(1) :'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png',
                         date: r.created_at ? new Date(r.created_at).toLocaleDateString('en-US',options) : null
-                    }))
+                    })),
+                    trailerUrl: data.videos.results?.find(r => r.site === 'YouTube' && r.type === "Trailer")?.key
 
                 }
+                console.log(filteredMovie.trailerUrl)
                 setMovie(filteredMovie)
             })
             .catch(err => {
@@ -114,7 +119,7 @@ function MovieComponent({id}) {
                         <a href={movie.imdbUrl} title="Visit movie website">{movie.title}</a>
                         <h5 className='font-weight-light font-italic'>{movie.tagline}</h5>
                         <div>{genres}</div>
-                        <h5 className='my-2'>⭐ {movie.rating || 'NR'}</h5>
+                        <h5 className='my-2'>⭐{movie.rating || 'NR'}{movie.voteCount ? <small className='text-warning'> ({movie.voteCount} votes)</small> : null}</h5>
                         <p className='text-muted font-weight-bold'>{languages[movie.language].name} • {movie.releaseDate || 'In Production'} {movie.runtime? `• ${movie.runtime} mins` : null}</p>
                         <div>
                             <b>Producer(s): </b>
@@ -148,14 +153,21 @@ function MovieComponent({id}) {
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs className='mb-3'>
-                                <h3 className='movie-page-heading mb-0'>Reviews</h3>
-                                <div className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px", overflowY:'hidden', position:'relative', borderRadius:"1rem"}}>
+                            <Col xs={reviewFeedExpanded? 12: true} className='mb-3'>
+                                <h3 className='movie-page-heading mb-0'>Top Reviews</h3>
+                                <div ref={reviewFeedRef} className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px", overflowY:'hidden', position:'relative', borderRadius:"1rem"}}>
                                     {reviews && reviews.length? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable</p>}
                                     {!reviewFeedExpanded && reviews && reviews.length ? <div style={{height:"50%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.3), transparent)', width:'100%', bottom:'0'}} /> : null}
                                 </div>
                                 {reviews && reviews.length ? <p className='review-expand-btn' onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse ᐱ": "Read more ᐯ"}</p>:null}
                             </Col>
+                        {movie.trailerUrl ? 
+                            <Col xs={12} md={6} className='mb-5'>
+                                <h3 className='movie-page-heading mb-3'>Trailer</h3>
+                                <div> 
+                                    <YoutubeEmbed embedId={movie.trailerUrl} />
+                                </div>
+                            </Col> : null}
                         </Row>
                     </Container>
                 </div>

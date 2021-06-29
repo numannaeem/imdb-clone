@@ -10,9 +10,9 @@ export default function LoadingComponent({page}) {
                     <Col className="cast-page" xs>
                         <div className='cast-header'>
                             <Skeleton height={400} width={300}/>
-                            <div className='ml-md-2 cast-details'>
-                                <h1 className='mb-2'><Skeleton width={300}/></h1>
-                                <p>{<Skeleton count={2}/>}</p>
+                            <div className='mt-3 mt-md-0 ml-md-2 cast-details' style={{flexGrow:'1'}}>
+                                <h1 className='mb-3'><Skeleton width={300}/></h1>
+                                <p>{<Skeleton count={2} width="70%"/>}</p>
                             </div>
                         </div>
                         <h4 className='text-warning'>Movie wall</h4>

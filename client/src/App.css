@@ -156,7 +156,7 @@
 /*FEED PAGE---------------------------------------------------------------*/
 
 .feed-skeleton {
-  height: 350px;
+  height: 400px;
 }
 
 .feed-page-header {
@@ -368,7 +368,7 @@
 
 .cast-card {
   cursor: pointer;
-  flex: 0 0 11rem;
+  flex: 0 0 10rem;
   white-space: pre-line;
   display: inline-flex;
   margin-right: 1rem;
@@ -383,7 +383,7 @@
   object-fit: cover;
   border-radius: 0.5rem 0.5rem 0 0;
   height: 200px;
-  width: 11rem;
+  width: 100%;
 }
 
 .cast-card:hover {
@@ -419,7 +419,7 @@
   text-align: center;
   background-color: hsl(240, 32%, 39%);
   color: white;
-  margin-top: 1rem;
+  margin-top: 0.3rem;
   border-radius: 1rem;
   transition: background-color 150ms ease;
 }
@@ -542,6 +542,21 @@ footer {
 .delete-button {
   border-color: rgb(206, 0, 0);
   background-color: rgba(100, 0, 0, 0.301);
+}
+
+.video-responsive {
+  overflow: hidden;
+  padding-bottom: 56.25%;
+  position: relative;
+  height: 0;
+}
+
+.video-responsive iframe {
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
 }
 
 /*MEDIA QUERIES---------------------------------------------------------------*/

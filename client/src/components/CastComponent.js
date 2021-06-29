@@ -19,7 +19,6 @@ function CastComponent({id}) {
         fetch(`https://api.themoviedb.org/3/person/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=movie_credits`)
             .then(res => res.json())
             .then(data => {
-                console.log(data.movie_credits)
                 const options = {year: 'numeric', month: 'long', day: 'numeric' }
                 const filteredCast = {
                     name: data.name,

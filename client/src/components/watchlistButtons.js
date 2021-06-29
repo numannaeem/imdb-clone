@@ -14,7 +14,7 @@ function AddButton(props) {
     }
 
     const defaultOptions = {
-        loop: true,
+        loop: false,
         autoplay: false,
         animationData: plusAnimationData,
         rendererSettings: {
@@ -45,7 +45,7 @@ function DeleteButton(props) {
     }
 
     const defaultOptions = {
-        loop: true,
+        loop: false,
         autoplay: false,
         animationData: minusAnimationData,
         rendererSettings: {

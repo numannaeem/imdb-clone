@@ -8,7 +8,6 @@ function TopRatedPage(props) {
 
     const [movieList,setMovieList] = useState(null)
     const [totalPages, setTotalPages] = useState(0)
-    const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
     const history = useHistory();
@@ -36,7 +35,6 @@ function TopRatedPage(props) {
         window.scrollTo(0, 0)
         setMovieList(null)
         setError('')
-        setLoading(true)
         fetch(`https://api.themoviedb.org/3/movie/top_rated?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=${props.page}`)
             .then((res) => {
                 if(!res.ok)
@@ -57,7 +55,6 @@ function TopRatedPage(props) {
                 setTotalPages(data.total_pages)
                 setMovieList(filteredMovies)
             })
-            .then(setTimeout(() => setLoading(false), 400))
             .catch((err) => setError(err.message))
     },[props.page, history])
 
@@ -72,7 +69,7 @@ function TopRatedPage(props) {
                             <span className='ml-2' style={{color:'lightgray'}}>{movie.releaseDate || ''}</span>
                         </div>
                     </div>
-                    <img src={movie.imgUrl} alt='poster' height='300px' width='238px'/>
+                    <img src={movie.imgUrl} alt='poster' height='379px' width='253px'/>
                </div>
             </Col>
         )
@@ -94,10 +91,9 @@ function TopRatedPage(props) {
                     </div>
                 </div>
                 <Row className='mb-5'>
-                    { loading ? <LoadingComponent page='feed' /> 
-                    : error ?  <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error}<br />Try again later</h3>
-                    : movieCards && movieCards.length? movieCards 
-                    : <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>Something went wrong<br />Try again later</h3>
+                    { movieCards && movieCards.length ? movieCards 
+                    : error ? <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error || "Something went wrong"}<br />Try again later</h3>
+                    : <LoadingComponent page='feed' /> 
                     }
                 </Row>
                 <div className='text-center mb-5'>
