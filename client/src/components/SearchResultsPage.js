@@ -41,7 +41,7 @@ function SearchResultsPage ({search, setSearch}) {
 
     
     useEffect(() => {
-        console.log('hi')
+        window.scrollTo(0,0)
         setResultList(null)
         setError('')
         if(queryText) {

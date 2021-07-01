@@ -21,9 +21,14 @@ function MovieComponent({id}) {
         history.push(`/cast/${id}`)
     }
 
+    const dispMovie = (id) => {
+        setMovie(null)
+        history.push(`/movie/${id}`)
+    }
+
     useEffect(() => {
         window.scrollTo(0,0)
-        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits,reviews,videos`)
+        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits,reviews,videos,recommendations`)
             .then(res => {
                 if(!res.ok)
                     throw new Error("Server error")
@@ -44,7 +49,7 @@ function MovieComponent({id}) {
                     rating: data.vote_average,
                     language: data.original_language,
                     voteCount: data.vote_count,
-                    companies:data.production_companies,
+                    companies:data.production_companies?.slice(0,4).map(c => c.name),
                     imgUrl: data.poster_path ? `https://image.tmdb.org/t/p/w342${data.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
                     backdropUrl: `https://image.tmdb.org/t/p/w1280${data.backdrop_path}`,
                     cast: data.credits.cast?.slice(0,20).map(c =>  ({
@@ -63,7 +68,14 @@ function MovieComponent({id}) {
                         profileUrl: r.author_details.avatar_path? r.author_details.avatar_path.substring(0,5) !== '/http' ? `https://image.tmdb.org/t/p/w45${r.author_details.avatar_path}` : r.author_details.avatar_path.substring(1) :'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png',
                         date: r.created_at ? new Date(r.created_at).toLocaleDateString('en-US',options) : null
                     })),
-                    videoUrls: data.videos.results?.filter(r => r.site === 'YouTube')?.map(v => v.key)
+                    videoUrls: data.videos.results?.filter(r => r.site === 'YouTube')?.map(v => v.key),
+                    recommendations: data.recommendations?.results?.map(m => ({
+                        id: m.id,
+                        title: m.title,
+                        imgUrl: m.poster_path ? `https://image.tmdb.org/t/p/w342/${m.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
+                        rating: (Math.floor(m.vote_average*10))/10,
+                        releaseDate: m.release_date? m.release_date.slice(0,4): null
+                    }))
                 }
                 setMovie(filteredMovie)
                 setCurrentVideo(filteredMovie.videoUrls[0])
@@ -82,6 +94,7 @@ function MovieComponent({id}) {
 
     if(movie) {
         const genres = movie.genres?.map(g => <p className='genre-pill' key={g}>{g}</p>)    
+        const companies = movie.companies?.map((c,idx) => idx !== movie.companies.length - 1 ? c + ', ' : c)
         const producers = movie.producers?.map((p, idx) => idx !== movie.producers.length - 1 ? p + ', ' : p)
         const directors = movie.directors?.map((p, idx) => idx !== movie.directors.length - 1 ? p + ', ' : p)
         const reviews = movie.reviews?.map(r => {
@@ -108,6 +121,20 @@ function MovieComponent({id}) {
                         <h6 className='font-weight-light'>as {c.character || '-'}</h6>
                     </div>
                 </div>
+            )
+        })
+        const recommendations = movie.recommendations?.map(m => {
+            return(
+                <div className='movie-card recommendation' key={m.id} onClick={() => dispMovie(m.id)}>
+                    <div className='movie-card-header'>
+                        <h5 className='mx-2'>{m.title}</h5>
+                        <div style={{display:'flex', justifyContent:'space-between', margin:'5%',alignItems:'center'}}>
+                            <span>⭐ {m.rating || 'NR'}</span>
+                            <span className='ml-2' style={{color:'lightgray'}}>{m.releaseDate || ''}</span>
+                        </div>
+                    </div>
+                    <img src={m.imgUrl} alt='poster' height='379px' width='253px'/>
+               </div>
             )
         })
         // const videos = movie.videoUrls?.map(v => {
@@ -142,7 +169,7 @@ function MovieComponent({id}) {
                     <img src={movie.imgUrl} alt="movie poster" className='d-none d-md-block' height="512px" width="342px" />
                     <div className='header-details'>
                         <a href={movie.imdbUrl} title="Visit movie website">{movie.title}</a>
-                        <h5 className='font-weight-light font-italic'>{movie.tagline}</h5>
+                        {movie.tagline && <h5 className='font-weight-light font-italic'>{movie.tagline}</h5>}
                         <div>{genres}</div>
                         <h5 className='my-2'>⭐{movie.rating || 'NR'}{movie.voteCount ? <small className='text-warning'> ({movie.voteCount} votes)</small> : null}</h5>
                         <p className='font-weight-bold' style={{color:'darkgray'}}>{languages[movie.language].name} • {movie.releaseDate || 'In Production'} {movie.runtime? `• ${movie.runtime} mins` : null}</p>
@@ -151,6 +178,8 @@ function MovieComponent({id}) {
                             <p>{producers && producers.length? producers : '-'}</p>
                             <b>Director(s): </b>
                             <p>{directors && directors.length? directors : '-'}</p>
+                            <b>Production Companies: </b>
+                            <p>{companies && companies.length? companies : '-'}</p>
                         </div>
                         <p>
                             <b>Estimated Revenue: </b>{movie.revenue ? '$'+movie.revenue.toLocaleString('en-UK') : '-'}
@@ -196,13 +225,21 @@ function MovieComponent({id}) {
                              </Col>
                         </Row>
                         <Row>
-                            <Col xs className='mb-3'>
+                            <Col xs className='mb-5'>
                                 <h3 className='movie-page-heading mb-0'>Top Reviews</h3>
                                 <div className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px"}}>
                                     {reviews?.length? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable (¬_¬")</p>}
-                                    {!reviewFeedExpanded && reviews?.length ? <div style={{height:"50%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.3), transparent)', width:'100%', bottom:'0'}} /> : null}
+                                    {!reviewFeedExpanded && reviews?.length ? <div style={{height:"70%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.7), transparent)', width:'100%', bottom:'0'}} /> : null}
                                 </div>
-                                {reviews?.length ? <p className='review-expand-btn' style={reviewFeedExpanded? {position:'relative'}: null} onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse": "Read more"}</p>:null}
+                                {reviews?.length ? <p className='review-expand-btn' style={reviewFeedExpanded? {position:'relative', boxShadow:'none'}: null} onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse": "Read more"}</p>:null}
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col xs className='mb-5'>
+                                <h3 className='movie-page-heading'>Similar recommendations</h3>
+                                <div className='scrolling-feed'>
+                                   {recommendations && recommendations.length? recommendations : <p className='text-muted font-italic'>recommendations unavailable ¯ \_(ツ)_/¯</p>}
+                                </div>
                             </Col>
                         </Row>
                     </Container>

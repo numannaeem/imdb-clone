@@ -351,6 +351,18 @@
   background-color: rgba(69, 72, 221, 0.329);
 }
 
+.company-pill {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.company-pill img {
+  background-color: #ffffff;
+  width: 45px;
+  object-fit: contain;
+}
+
 .movie-page-body {
   padding-top: 3rem;
 }
@@ -431,7 +443,7 @@
   padding: 0.5rem 0;
   text-align: center;
   background-color: hsl(256, 100%, 65%);
-  box-shadow: 0 0px 60px 5px hsl(256, 100%, 70%);
+  box-shadow: 0 0px 40px 2px hsl(256, 100%, 70%);
   color: white;
   margin-top: 0.5rem;
   border-radius: 2rem;
@@ -449,10 +461,6 @@
   overflow: hidden;
 }
 
-.video:last-child{
-  margin-right: 0;
-}
-
 .video-buttons {
   color: rgb(201, 172, 255);
   padding: 0.3rem;
@@ -466,6 +474,21 @@
   color: #3b0b7a;
   background-color: rgb(201, 172, 255);
   border-color: rgb(201, 172, 255);
+}
+
+.recommendation {
+  display: inline-flex;
+  flex: 0 0 12rem;
+  text-align: center;
+  margin-right: 1rem;
+}
+
+.recommendation:first-child {
+  margin-left: 0.5rem;
+}
+
+.recommendation:hover {
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.534);
 }
 
 /*CAST PAGE-------------------------------------------------------------------*/
