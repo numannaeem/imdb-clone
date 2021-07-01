@@ -220,16 +220,6 @@
   position: relative;
 }
 
-.video-buttons {
-  cursor: pointer;
-  color: rgb(201, 172, 255);
-  transition: color 150ms;
-}
-
-.video-buttons:hover {
-  color: rgb(200, 83, 255);
-}
-
 .btn-group .btn {
   border-radius: 1rem;
   background-color: transparent;
@@ -408,7 +398,8 @@
 
 .review-feed {
   position: relative;
-  transition: height 200ms;
+  overflow-y: hidden;
+  border-radius: 1rem;
 }
 
 .review-card {
@@ -430,28 +421,53 @@
 }
 
 .review-expand-btn {
+  position: absolute;
+  font-size: 1.1em;
+  width: max(15vw, 200px);
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
   cursor: pointer;
-  padding: 0.3rem;
+  padding: 0.5rem 0;
   text-align: center;
-  background-color: hsl(240, 32%, 39%);
+  background-color: hsl(256, 100%, 65%);
+  box-shadow: 0 0px 60px 5px hsl(256, 100%, 70%);
   color: white;
-  margin-top: 0.3rem;
-  border-radius: 1rem;
+  margin-top: 0.5rem;
+  border-radius: 2rem;
   transition: background-color 150ms ease;
 }
 
 .review-expand-btn:hover {
-  background-color: hsl(240, 32%, 29%);
+  background-color: hsl(266, 100%, 50%);
 }
 
 .video {
+  border-radius: 0.8rem;
   margin: auto;
   max-width: 650px;
+  overflow: hidden;
 }
 
 .video:last-child{
   margin-right: 0;
 }
+
+.video-buttons {
+  color: rgb(201, 172, 255);
+  padding: 0.3rem;
+  border-radius: 0.5rem;
+  border: 2px solid;
+  cursor: pointer;
+  transition: background-color 150ms, color 150ms;
+}
+
+.video-buttons:hover {
+  color: #3b0b7a;
+  background-color: rgb(201, 172, 255);
+  border-color: rgb(201, 172, 255);
+}
+
 /*CAST PAGE-------------------------------------------------------------------*/
 
 
@@ -570,7 +586,6 @@ footer {
 }
 
 .video-responsive {
-  border-radius: 0.5rem;
   overflow: hidden;
   padding-bottom: 56.25%;
   position: relative;

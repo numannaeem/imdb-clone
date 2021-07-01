@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, Container, Row } from 'react-bootstrap'
 import { useHistory } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
@@ -14,7 +14,6 @@ function MovieComponent({id}) {
     const [inWatchlist, setInWatchlist] = useState(Boolean(localStorage.getItem(`mId:${id}`)))
     const [reviewFeedExpanded, setReviewFeedExpanded] = useState(false);
     const [currentVideo, setCurrentVideo] = useState(null)
-    const reviewFeedRef = useRef(null)
 
     const history = useHistory()
 
@@ -91,8 +90,8 @@ function MovieComponent({id}) {
                     <div className='d-flex align-items-center'>
                         <img src={r.profileUrl} height='45px' width='45px' alt={r.author}/>
                         <div className='ml-2'>
-                            <h6>{r.author}</h6>
-                            <p className='font-weight-light mb-0' style={{fontSize:'95%'}}>{r.date}{r.rating? ' • ⭐'+ r.rating : null}</p>
+                            <h6 className='mb-0'>{r.author}</h6>
+                            <small className='font-weight-light mb-0'>{r.date}{r.rating? ' • ⭐'+ r.rating : null}</small>
                         </div>
                     </div>
                     <hr style={{borderColor:'gray'}} className='mt-1'/>
@@ -120,8 +119,8 @@ function MovieComponent({id}) {
         // })
 
         const changeVideo = (dir) => {
+            let index = movie.videoUrls.findIndex(v => v === currentVideo)
             if(dir === 'next') {
-                let index = movie.videoUrls.findIndex(v => v === currentVideo)
                 if(index === movie.videoUrls.length - 1)
                     setCurrentVideo(movie.videoUrls[0])
                 else
@@ -129,7 +128,6 @@ function MovieComponent({id}) {
                 return;
             }
             if(dir === 'prev') {
-                let index = movie.videoUrls.findIndex(v => v === currentVideo)
                 if(index === 0)
                     setCurrentVideo(movie.videoUrls[movie.videoUrls.length - 1])
                 else
@@ -190,21 +188,21 @@ function MovieComponent({id}) {
                                    {movie.videoUrls.length > 1? 
                                    <div className='text-center'>
                                             <span className='mx-1 video-buttons' onClick={() => changeVideo("prev")}>Back</span>
-                                            <span>• {movie.videoUrls.findIndex(v=> v===currentVideo) + 1}/{movie.videoUrls.length} •</span>
+                                            <span> {movie.videoUrls.findIndex(v => v === currentVideo) + 1}/{movie.videoUrls.length} </span>
                                             <span className='mx-1 video-buttons' onClick={() => changeVideo("next")}>Next</span>
                                    </div>: null}
                                 </>
-                                : <p className='text-muted font-italic'>videos unavailable (˘･_･˘)</p> }
+                                : <p className='text-muted font-italic'>media unavailable (˘･_･˘)</p> }
                              </Col>
                         </Row>
                         <Row>
                             <Col xs className='mb-3'>
                                 <h3 className='movie-page-heading mb-0'>Top Reviews</h3>
-                                <div ref={reviewFeedRef} className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px", overflowY:'hidden', position:'relative', borderRadius:"1rem"}}>
-                                    {reviews && reviews.length? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable (¬_¬")</p>}
-                                    {!reviewFeedExpanded && reviews && reviews.length ? <div style={{height:"50%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.3), transparent)', width:'100%', bottom:'0'}} /> : null}
+                                <div className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px"}}>
+                                    {reviews?.length? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable (¬_¬")</p>}
+                                    {!reviewFeedExpanded && reviews?.length ? <div style={{height:"50%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.3), transparent)', width:'100%', bottom:'0'}} /> : null}
                                 </div>
-                                {reviews && reviews.length ? <p className='review-expand-btn' onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse ᐱ": "Read more ᐯ"}</p>:null}
+                                {reviews?.length ? <p className='review-expand-btn' style={reviewFeedExpanded? {position:'relative'}: null} onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse": "Read more"}</p>:null}
                             </Col>
                         </Row>
                     </Container>
