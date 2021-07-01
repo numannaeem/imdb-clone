@@ -43,13 +43,12 @@ function UpcomingPage(props) {
                     return res.json()
                 })    
             .then(data => {
-                const options = { year: 'numeric', month: 'long', day: 'numeric' }
                 const filteredMovies = data.results ? data.results.map((movie) => ({
                     id: movie.id,
                     title: movie.title,
                     description: movie.overview,
                     imgUrl: movie.poster_path ? `https://image.tmdb.org/t/p/w342/${movie.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
-                    releaseDate: movie.release_date? new Date(movie.release_date).toLocaleDateString('en-US',options) : null,
+                    releaseDate: movie.release_date? new Date(movie.release_date).toLocaleDateString('en-US', {year: 'numeric'}) : null,
                     rating:movie.vote_average,
                 })) : null
                 setTotalPages(data.total_pages)

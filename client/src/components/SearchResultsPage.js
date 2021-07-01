@@ -66,13 +66,12 @@ function SearchResultsPage ({search, setSearch}) {
                         setResultList(filteredResults)
                     }
                     else {
-                        const options = {year: 'numeric', month: 'long', day: 'numeric' }
                         const filteredResults = data.results?.map((movie) => ({
                             id: movie.id,
                             title: movie.title,
                             description: movie.overview,
                             imgUrl: movie.poster_path ? `https://image.tmdb.org/t/p/w342/${movie.poster_path}` : 'https://faculty.eng.ufl.edu/dobson-lab/wp-content/uploads/sites/88/2015/11/img-placeholder.png',
-                            releaseDate: movie.release_date? new Date(movie.release_date).toLocaleDateString('en-UK',options) :null,
+                            releaseDate: movie.release_date? new Date(movie.release_date).toLocaleDateString('en-UK', {year: 'numeric'}) :null,
                             rating:movie.vote_average
                         }))
                         setResultList(filteredResults)

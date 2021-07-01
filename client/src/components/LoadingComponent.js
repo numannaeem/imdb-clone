@@ -93,7 +93,7 @@ export default function LoadingComponent({page}) {
                         <Row>
                             <Col xs className='mb-3'>
                                 <h3 className='movie-page-heading'>Starring</h3>
-                                <div className='cast-feed'>
+                                <div className='scrolling-feed'>
                                     <Skeleton height={250} width={150} className="mr-3"/>
                                     <Skeleton height={250} width={150} className="mr-3"/>
                                     <Skeleton height={250} width={150} className="mr-3"/>
@@ -108,8 +108,11 @@ export default function LoadingComponent({page}) {
                         </Row>
                         <Row>
                             <Col xs className='mb-3'>
-                                <h3 className='movie-page-heading'>Trailer and more</h3>
-                                <p><Skeleton count={3}/></p>
+                                <h3 className='movie-page-heading'>Trailers</h3>
+                                <div className='scrolling-feed'>
+                                    <Skeleton height={250} width={450} className="mr-3"/>
+                                    <Skeleton height={250} width={450} className="mr-3"/>
+                                </div>
                             </Col>
                         </Row>
                     </Container>

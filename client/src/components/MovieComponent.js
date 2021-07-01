@@ -13,6 +13,7 @@ function MovieComponent({id}) {
     const [error,setError] = useState(null)
     const [inWatchlist, setInWatchlist] = useState(Boolean(localStorage.getItem(`mId:${id}`)))
     const [reviewFeedExpanded, setReviewFeedExpanded] = useState(false);
+    const [currentVideo, setCurrentVideo] = useState(null)
     const reviewFeedRef = useRef(null)
 
     const history = useHistory()
@@ -64,10 +65,9 @@ function MovieComponent({id}) {
                         date: r.created_at ? new Date(r.created_at).toLocaleDateString('en-US',options) : null
                     })),
                     videoUrls: data.videos.results?.filter(r => r.site === 'YouTube')?.map(v => v.key)
-
                 }
-                console.log(filteredMovie.trailerUrl)
                 setMovie(filteredMovie)
+                setCurrentVideo(filteredMovie.videoUrls[0])
             })
             .catch(err => {
                 if(err)
@@ -77,7 +77,7 @@ function MovieComponent({id}) {
 
     if(error) {
         return(
-            <h3 className='text-muted text-center' style={{margin:'15% auto', minHeight:'50vh'}}>{error}<br />Try again</h3>
+            <h3 className='text-muted text-center' style={{margin:'15rem auto'}}>{error}<br />Try again</h3>
         )
     }
 
@@ -111,13 +111,33 @@ function MovieComponent({id}) {
                 </div>
             )
         })
-        const videos = movie.videoUrls?.map(v => {
-            return(
-                <div className='video'>
-                    <YoutubeEmbed key={v} embedId={v} />
-                </div>
-            )
-        })
+        // const videos = movie.videoUrls?.map(v => {
+        //     return(
+        //         <div className='video' key={v}>
+        //             <YoutubeEmbed embedId={v} />
+        //         </div>
+        //     )
+        // })
+
+        const changeVideo = (dir) => {
+            if(dir === 'next') {
+                let index = movie.videoUrls.findIndex(v => v === currentVideo)
+                if(index === movie.videoUrls.length - 1)
+                    setCurrentVideo(movie.videoUrls[0])
+                else
+                    setCurrentVideo(movie.videoUrls[index+1])
+                return;
+            }
+            if(dir === 'prev') {
+                let index = movie.videoUrls.findIndex(v => v === currentVideo)
+                if(index === 0)
+                    setCurrentVideo(movie.videoUrls[movie.videoUrls.length - 1])
+                else
+                    setCurrentVideo(movie.videoUrls[index-1])
+                return;
+            }
+        }
+
         return(
             <div className='movie-page'>
                 <div className='movie-page-header' style={{backgroundImage:'linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),url('+ movie.backdropUrl + ')'}}>
@@ -127,7 +147,7 @@ function MovieComponent({id}) {
                         <h5 className='font-weight-light font-italic'>{movie.tagline}</h5>
                         <div>{genres}</div>
                         <h5 className='my-2'>⭐{movie.rating || 'NR'}{movie.voteCount ? <small className='text-warning'> ({movie.voteCount} votes)</small> : null}</h5>
-                        <p className='text-muted font-weight-bold'>{languages[movie.language].name} • {movie.releaseDate || 'In Production'} {movie.runtime? `• ${movie.runtime} mins` : null}</p>
+                        <p className='font-weight-bold' style={{color:'darkgray'}}>{languages[movie.language].name} • {movie.releaseDate || 'In Production'} {movie.runtime? `• ${movie.runtime} mins` : null}</p>
                         <div>
                             <b>Producer(s): </b>
                             <p>{producers && producers.length? producers : '-'}</p>
@@ -139,7 +159,7 @@ function MovieComponent({id}) {
                         </p>
                         { inWatchlist ? <DeleteButton movieId={id} onClick={() => setInWatchlist(false)}/> 
                         : <AddButton onClick={() => setInWatchlist(true)} movieId={id} 
-                            name={JSON.stringify({title:movie.title, rating:movie.rating, imgUrl:movie.imgUrl, releaseDate:movie.releaseDate})}
+                            name={JSON.stringify({title:movie.title, rating:movie.rating, imgUrl:movie.imgUrl, releaseDate:movie.releaseDate?.substr(-4,4)})}
                         />}
                     </div>
                 </div>
@@ -161,11 +181,19 @@ function MovieComponent({id}) {
                         </Row>
                         <Row>
                             <Col xs className='mb-5'>
-                                <h3 className='movie-page-heading'>Videos{movie.videoUrls.length>1 ? <small className='text-muted'> (scroll for more!)</small>: ''}</h3>
-                                { movie.videoUrls.length ? 
-                                <div className='scrolling-feed'> 
-                                    {videos}
-                                </div>
+                                <h3 className='movie-page-heading'>Media</h3>
+                                {currentVideo ? 
+                                <>
+                                    <div className='video mb-3'>
+                                        <YoutubeEmbed embedId={currentVideo} />
+                                    </div>
+                                   {movie.videoUrls.length > 1? 
+                                   <div className='text-center'>
+                                            <span className='mx-1 video-buttons' onClick={() => changeVideo("prev")}>Back</span>
+                                            <span>• {movie.videoUrls.findIndex(v=> v===currentVideo) + 1}/{movie.videoUrls.length} •</span>
+                                            <span className='mx-1 video-buttons' onClick={() => changeVideo("next")}>Next</span>
+                                   </div>: null}
+                                </>
                                 : <p className='text-muted font-italic'>videos unavailable (˘･_･˘)</p> }
                              </Col>
                         </Row>
