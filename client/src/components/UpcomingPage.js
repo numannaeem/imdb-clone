@@ -77,7 +77,7 @@ function UpcomingPage(props) {
 
     return(
         <SkeletonTheme color="#505050" highlightColor="#303030">
-            <Container>
+            <Container style={{minHeight:'200vh', display:'flex', flexDirection:'column'}}>
                 <div className='feed-page-header text-center m-5'>
                     <h1>Upcoming Movies</h1>
                     <div className='text-center my-4'>
@@ -96,7 +96,7 @@ function UpcomingPage(props) {
                     : <LoadingComponent page='feed' /> 
                     }
                 </Row>
-                <div className='text-center mb-5'>
+                <div className='text-center mb-5 mt-auto'>
                     <ButtonGroup>
                         <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
                         <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('prev')}><i className='fa fa-angle-left'></i></Button>

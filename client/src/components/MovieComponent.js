@@ -63,7 +63,7 @@ function MovieComponent({id}) {
                         profileUrl: r.author_details.avatar_path? r.author_details.avatar_path.substring(0,5) !== '/http' ? `https://image.tmdb.org/t/p/w45${r.author_details.avatar_path}` : r.author_details.avatar_path.substring(1) :'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png',
                         date: r.created_at ? new Date(r.created_at).toLocaleDateString('en-US',options) : null
                     })),
-                    trailerUrl: data.videos.results?.find(r => r.site === 'YouTube' && r.type === "Trailer")?.key
+                    videoUrls: data.videos.results?.filter(r => r.site === 'YouTube')?.map(v => v.key)
 
                 }
                 console.log(filteredMovie.trailerUrl)
@@ -111,6 +111,13 @@ function MovieComponent({id}) {
                 </div>
             )
         })
+        const videos = movie.videoUrls?.map(v => {
+            return(
+                <div className='video'>
+                    <YoutubeEmbed key={v} embedId={v} />
+                </div>
+            )
+        })
         return(
             <div className='movie-page'>
                 <div className='movie-page-header' style={{backgroundImage:'linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),url('+ movie.backdropUrl + ')'}}>
@@ -128,7 +135,7 @@ function MovieComponent({id}) {
                             <p>{directors && directors.length? directors : '-'}</p>
                         </div>
                         <p>
-                            <b>Estimated Budget:</b> {movie.budget ? '$'+movie.budget.toLocaleString('en-UK') : '-'} | <b>Gross Revenue: </b>{movie.revenue ? '$'+movie.revenue.toLocaleString('en-UK') : '-'}
+                            <b>Estimated Revenue: </b>{movie.revenue ? '$'+movie.revenue.toLocaleString('en-UK') : '-'}
                         </p>
                         { inWatchlist ? <DeleteButton movieId={id} onClick={() => setInWatchlist(false)}/> 
                         : <AddButton onClick={() => setInWatchlist(true)} movieId={id} 
@@ -146,28 +153,31 @@ function MovieComponent({id}) {
                         </Row>
                         <Row>
                             <Col xs className='mb-5'>
-                                <h3 className='movie-page-heading'>Top Cast Cembers</h3>
-                                <div className='cast-feed'>
-                                   {cast && cast.length? cast : <p className='text-muted font-italic'>cast details unavailable</p>}
+                                <h3 className='movie-page-heading'>Starring</h3>
+                                <div className='scrolling-feed'>
+                                   {cast && cast.length? cast : <p className='text-muted font-italic'>cast details unavailable ¯ \_(ツ)_/¯</p>}
                                 </div>
                             </Col>
                         </Row>
                         <Row>
-                            <Col xs={reviewFeedExpanded? 12: true} className='mb-3'>
+                            <Col xs className='mb-5'>
+                                <h3 className='movie-page-heading'>Videos{movie.videoUrls.length>1 ? <small className='text-muted'> (scroll for more!)</small>: ''}</h3>
+                                { movie.videoUrls.length ? 
+                                <div className='scrolling-feed'> 
+                                    {videos}
+                                </div>
+                                : <p className='text-muted font-italic'>videos unavailable (˘･_･˘)</p> }
+                             </Col>
+                        </Row>
+                        <Row>
+                            <Col xs className='mb-3'>
                                 <h3 className='movie-page-heading mb-0'>Top Reviews</h3>
                                 <div ref={reviewFeedRef} className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px", overflowY:'hidden', position:'relative', borderRadius:"1rem"}}>
-                                    {reviews && reviews.length? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable</p>}
+                                    {reviews && reviews.length? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable (¬_¬")</p>}
                                     {!reviewFeedExpanded && reviews && reviews.length ? <div style={{height:"50%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.3), transparent)', width:'100%', bottom:'0'}} /> : null}
                                 </div>
                                 {reviews && reviews.length ? <p className='review-expand-btn' onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse ᐱ": "Read more ᐯ"}</p>:null}
                             </Col>
-                        {movie.trailerUrl ? 
-                            <Col xs={12} md={6} className='mb-5'>
-                                <h3 className='movie-page-heading mb-3'>Trailer</h3>
-                                <div> 
-                                    <YoutubeEmbed embedId={movie.trailerUrl} />
-                                </div>
-                            </Col> : null}
                         </Row>
                     </Container>
                 </div>

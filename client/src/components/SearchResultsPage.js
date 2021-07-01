@@ -8,7 +8,6 @@ function SearchResultsPage ({search, setSearch}) {
     const [resultList,setResultList] = useState(null)
     const [totalResults, setTotalResults] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
-    const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
     const history = useHistory();
@@ -42,7 +41,7 @@ function SearchResultsPage ({search, setSearch}) {
 
     
     useEffect(() => {
-        setLoading(true)
+        console.log('hi')
         setResultList(null)
         setError('')
         if(queryText) {
@@ -50,16 +49,15 @@ function SearchResultsPage ({search, setSearch}) {
                 .then(res => {
                     if(res.ok)
                         return res.json()
-                    else throw new Error("Server down. Please try later.")
+                    else throw new Error("Server down")
                 })
                 .then(data => {
-                    console.log(data)
                     setTotalResults(data.total_results)
                     setTotalPages(data.total_pages)
-                    if (data.total_pages < queryPage)
+                    if (data.total_pages < queryPage && data.total_results)
                         history.push(`/search?query=${queryText}&page=1`)
                     else if(search === 'person') {
-                        const filteredResults = data.results.map((person) => ({
+                        const filteredResults = data.results?.map((person) => ({
                             id:person.id,
                             name:person.name,
                             imgUrl: person.profile_path ? `https://image.tmdb.org/t/p/w185/${person.profile_path}` : 'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png' ,
@@ -69,7 +67,7 @@ function SearchResultsPage ({search, setSearch}) {
                     }
                     else {
                         const options = {year: 'numeric', month: 'long', day: 'numeric' }
-                        const filteredMovies = data.results.map((movie) => ({
+                        const filteredResults = data.results?.map((movie) => ({
                             id: movie.id,
                             title: movie.title,
                             description: movie.overview,
@@ -77,10 +75,9 @@ function SearchResultsPage ({search, setSearch}) {
                             releaseDate: movie.release_date? new Date(movie.release_date).toLocaleDateString('en-UK',options) :null,
                             rating:movie.vote_average
                         }))
-                        setResultList(filteredMovies)
+                        setResultList(filteredResults)
                     }
                 })
-                .then(setTimeout(() => setLoading(false), 300))
                 .catch(err => setError(err.message))
             }
     },[queryText, queryPage, search, history])
@@ -122,7 +119,7 @@ function SearchResultsPage ({search, setSearch}) {
     if(queryText)
         return(
             <SkeletonTheme color="#505050" highlightColor="#303030">
-                <Container style={{minHeight:'120vh'}}>
+                <Container style={{minHeight:'180vh', display:'flex', flexDirection:'column'}}>
                     <div className='feed-page-header text-center mt-5'>
                         <h1>Search Results</h1>
                         <div className='search-type'>
@@ -135,33 +132,35 @@ function SearchResultsPage ({search, setSearch}) {
                                 </ToggleButton>
                             </ButtonGroup>
                         </div>
-                        <h5 className='font-weight-light text-light'>{totalResults} matches found</h5>
+                        <h6 className='font-weight-light text-light'>{totalResults} matches found</h6>
                     </div>
-                    {totalPages > 1? <div className='text-center mb-4'>
-                        <ButtonGroup>
-                            <Button variant="warning" disabled={queryPage <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
-                            <Button variant="warning" disabled={queryPage <= '1'}  onClick={() => changePage('prev')}><i className='fa fa-angle-left'></i></Button>
-                            <div className='page-number'><p className='mb-0'>{queryPage}</p></div>
-                            <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('next')}><i className='fa fa-angle-right'></i></Button>
-                            <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('last')}><i className='fa fa-angle-double-right'></i></Button>
-                        </ButtonGroup>
-                    </div> : null}
-                    <Row className='mb-5 justify-content-center'>
-                        { loading? <LoadingComponent page="feed" /> 
-                        : error? <h2 className='mx-auto my-5 text-muted text-center' style={{height:'50vh'}}>{error}<br />Please try again later.</h2>
-                        : resultCards && resultCards.length ? resultCards 
-                        : <h2 className='mx-auto my-5 text-muted' style={{height:'50vh'}}>No results</h2>
-                        }
-                    </Row>
-                    {totalPages > 1? <div className='text-center mb-5'>
-                        <ButtonGroup>
-                            <Button variant="warning" disabled={queryPage <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
-                            <Button variant="warning" disabled={queryPage <= '1'}  onClick={() => changePage('prev')}><i className='fa fa-angle-left'></i></Button>
-                            <div className='page-number'><p className='mb-0'>{queryPage}</p></div>
-                            <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('next')}><i className='fa fa-angle-right'></i></Button>
-                            <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('last')}><i className='fa fa-angle-double-right'></i></Button>
-                        </ButtonGroup>
-                    </div> : null}
+                    <div style={{flexGrow:'1', display:'flex', flexDirection:'column'}}>
+                        {totalPages > 1? <div className='text-center mb-4'>
+                            <ButtonGroup>
+                                <Button variant="warning" disabled={queryPage <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
+                                <Button variant="warning" disabled={queryPage <= '1'}  onClick={() => changePage('prev')}><i className='fa fa-angle-left'></i></Button>
+                                <div className='page-number'><p className='mb-0'>{queryPage}</p></div>
+                                <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('next')}><i className='fa fa-angle-right'></i></Button>
+                                <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('last')}><i className='fa fa-angle-double-right'></i></Button>
+                            </ButtonGroup>
+                        </div> : null}
+                        <Row className='mb-5 justify-content-center'>
+                            { error? <h4 className='mx-auto my-5 text-muted text-center' style={{height:'50vh'}}>{error}<br />Please try again later.</h4>
+                            : resultCards? resultCards.length ? resultCards 
+                            : <h4 className='mx-auto my-5 text-muted' style={{height:'50vh'}}>No results</h4>
+                            : <LoadingComponent page="feed" />
+                            }
+                        </Row>
+                        {totalPages > 1? <div className='text-center mb-5 mt-auto'>
+                            <ButtonGroup>
+                                <Button variant="warning" disabled={queryPage <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
+                                <Button variant="warning" disabled={queryPage <= '1'}  onClick={() => changePage('prev')}><i className='fa fa-angle-left'></i></Button>
+                                <div className='page-number'><p className='mb-0'>{queryPage}</p></div>
+                                <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('next')}><i className='fa fa-angle-right'></i></Button>
+                                <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('last')}><i className='fa fa-angle-double-right'></i></Button>
+                            </ButtonGroup>
+                        </div> : null}
+                    </div>
                 </Container>
             </SkeletonTheme>
         )
