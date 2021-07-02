@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useLayoutEffect } from "react";
 import { Col, Container, Row } from 'react-bootstrap'
-import { useHistory } from "react-router";
+import { withRouter } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
 import LoadingComponent from "./LoadingComponent";
 import { AddButton, DeleteButton } from "./watchlistButtons";
 import { languages } from '../shared/languages'
 import YoutubeEmbed from "./YoutubeEmbed";
 
-function MovieComponent({id}) {
+function MovieComponent({id, history}) {
 
     const [movie, setMovie] = useState(null)
     const [error,setError] = useState(null)
     const [inWatchlist, setInWatchlist] = useState(Boolean(localStorage.getItem(`mId:${id}`)))
     const [reviewFeedExpanded, setReviewFeedExpanded] = useState(false);
     const [currentVideo, setCurrentVideo] = useState(null)
-
-    const history = useHistory()
+    const reviewFeedRef = useRef(null)
 
     const dispCast = (id) => {
         history.push(`/cast/${id}`)
@@ -25,8 +24,8 @@ function MovieComponent({id}) {
         setMovie(null)
         history.push(`/movie/${id}`)
     }
-
-    useEffect(() => {
+    
+    useEffect(() => {        
         window.scrollTo(0,0)
         fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits,reviews,videos,recommendations`)
             .then(res => {
@@ -78,13 +77,15 @@ function MovieComponent({id}) {
                     }))
                 }
                 setMovie(filteredMovie)
-                setCurrentVideo(filteredMovie.videoUrls[0])
+                setCurrentVideo(0)
             })
             .catch(err => {
                 if(err)
                     setError(err.message)
             })
     },[id])
+
+    const seeMore = () => reviewFeedRef.current?.clientHeight > 299
 
     if(error) {
         return(
@@ -137,28 +138,27 @@ function MovieComponent({id}) {
                </div>
             )
         })
-        // const videos = movie.videoUrls?.map(v => {
-        //     return(
-        //         <div className='video' key={v}>
-        //             <YoutubeEmbed embedId={v} />
-        //         </div>
-        //     )
-        // })
+        const videos = movie.videoUrls?.map(v => {
+            return(
+                <div className='video mb-3' key={v}>
+                    <YoutubeEmbed embedId={v} />
+                </div>
+            )
+        })
 
         const changeVideo = (dir) => {
-            let index = movie.videoUrls.findIndex(v => v === currentVideo)
             if(dir === 'next') {
-                if(index === movie.videoUrls.length - 1)
-                    setCurrentVideo(movie.videoUrls[0])
+                if(currentVideo === movie.videoUrls.length - 1)
+                    setCurrentVideo(0)
                 else
-                    setCurrentVideo(movie.videoUrls[index+1])
+                    setCurrentVideo((p) => p+1)
                 return;
             }
             if(dir === 'prev') {
-                if(index === 0)
-                    setCurrentVideo(movie.videoUrls[movie.videoUrls.length - 1])
+                if(currentVideo === 0)
+                    setCurrentVideo(movie.videoUrls.length - 1)
                 else
-                    setCurrentVideo(movie.videoUrls[index-1])
+                    setCurrentVideo((p) => p-1)
                 return;
             }
         }
@@ -209,15 +209,13 @@ function MovieComponent({id}) {
                         <Row>
                             <Col xs className='mb-5'>
                                 <h3 className='movie-page-heading'>Media</h3>
-                                {currentVideo ? 
+                                {movie.videoUrls && movie.videoUrls.length ? 
                                 <>
-                                    <div className='video mb-3'>
-                                        <YoutubeEmbed embedId={currentVideo} />
-                                    </div>
+                                   {videos[currentVideo]}
                                    {movie.videoUrls.length > 1? 
                                    <div className='text-center'>
                                             <span className='mx-1 video-buttons' onClick={() => changeVideo("prev")}>Back</span>
-                                            <span> {movie.videoUrls.findIndex(v => v === currentVideo) + 1}/{movie.videoUrls.length} </span>
+                                            <span> {currentVideo+1}/{movie.videoUrls.length} </span>
                                             <span className='mx-1 video-buttons' onClick={() => changeVideo("next")}>Next</span>
                                    </div>: null}
                                 </>
@@ -227,11 +225,11 @@ function MovieComponent({id}) {
                         <Row>
                             <Col xs className='mb-5'>
                                 <h3 className='movie-page-heading mb-0'>Top Reviews</h3>
-                                <div className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px"}}>
+                                <div ref={reviewFeedRef} className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px"}}>
                                     {reviews?.length? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable (¬_¬")</p>}
-                                    {!reviewFeedExpanded && reviews?.length ? <div style={{height:"70%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.7), transparent)', width:'100%', bottom:'0'}} /> : null}
+                                    {seeMore() && !reviewFeedExpanded && reviews?.length ? <div style={{height:"70%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.7), transparent)', width:'100%', bottom:'0'}} /> : null}
                                 </div>
-                                {reviews?.length ? <p className='review-expand-btn' style={reviewFeedExpanded? {position:'relative', boxShadow:'none'}: null} onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse": "Read more"}</p>:null}
+                                {reviews?.length && seeMore() ? <p className='review-expand-btn' style={reviewFeedExpanded? {position:'relative', boxShadow:'none'}: null} onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse": "Read more"}</p>:null}
                             </Col>
                         </Row>
                         <Row>
@@ -255,4 +253,4 @@ function MovieComponent({id}) {
     )
 }
 
-export default MovieComponent
+export default withRouter(MovieComponent)
