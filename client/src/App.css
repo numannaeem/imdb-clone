@@ -39,7 +39,7 @@
 }
 
 #navbar-search ::placeholder {
-  color: rgba(255, 208, 0, 0.76);
+  color: rgba(255, 208, 0, 0.733);
 }
 
 .navbar-blue {
@@ -53,6 +53,7 @@
   margin-right: 6px;
   color: rgba(255, 255, 255, 0.658);
   transition: color 150ms, background-color 150ms;
+  text-align: center;
 }
 
 .navbar-link-active {
@@ -447,17 +448,18 @@
   color: white;
   margin-top: 0.5rem;
   border-radius: 2rem;
-  transition: background-color 150ms ease;
+  transition: box-shadow 150ms ease;
 }
 
 .review-expand-btn:hover {
-  background-color: hsl(266, 100%, 50%);
+  background-color: hsl(256, 100%, 70%);
+  box-shadow: 0 0px 50px 3px hsl(256, 100%, 70%);
 }
 
 .video {
   border-radius: 0.8rem;
   margin: auto;
-  max-width: 650px;
+  width: 70%;
   overflow: hidden;
 }
 
@@ -687,7 +689,6 @@ footer {
   }
 
   .video {
-    flex-basis: 100%;
     width: 100%;
   }
 

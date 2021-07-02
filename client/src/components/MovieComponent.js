@@ -11,9 +11,13 @@ function MovieComponent({id, history}) {
 
     const [movie, setMovie] = useState(null)
     const [error,setError] = useState(null)
-    const [inWatchlist, setInWatchlist] = useState(Boolean(localStorage.getItem(`mId:${id}`)))
+    const [inWatchlist, setInWatchlist] = useState(false)
     const [reviewFeedExpanded, setReviewFeedExpanded] = useState(false);
-    const [currentVideo, setCurrentVideo] = useState(null)
+    const [currentVideo, setCurrentVideo] = useState(null);
+    const [seeMoreBtn, setSeeMoreBtn] = useState({
+        reviewsPresent: false,
+        heightOver300: false 
+    });
     const reviewFeedRef = useRef(null)
 
     const dispCast = (id) => {
@@ -25,8 +29,9 @@ function MovieComponent({id, history}) {
         history.push(`/movie/${id}`)
     }
     
-    useEffect(() => {        
+    useEffect(() => {     
         window.scrollTo(0,0)
+        setInWatchlist(Boolean(localStorage.getItem(`mId:${id}`)))
         fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits,reviews,videos,recommendations`)
             .then(res => {
                 if(!res.ok)
@@ -78,14 +83,24 @@ function MovieComponent({id, history}) {
                 }
                 setMovie(filteredMovie)
                 setCurrentVideo(0)
+                setSeeMoreBtn((p) => ({heightOver300: p.heightOver300, reviewsPresent: filteredMovie.reviews.length > 0}))
             })
             .catch(err => {
-                if(err)
-                    setError(err.message)
+                setError(err.message)
             })
     },[id])
 
-    const seeMore = () => reviewFeedRef.current?.clientHeight > 299
+    useEffect(() => {
+        console.log('hi')
+        if (reviewFeedRef.current) { 
+            setSeeMoreBtn(p => ({reviewsPresent:p.reviewsPresent, heightOver300: reviewFeedRef.current.clientHeight > 299}))
+        }
+        else {
+            setSeeMoreBtn({
+                heightOver300: true, reviewsPresent: true
+            })
+        }
+    },[movie])
 
     if(error) {
         return(
@@ -226,10 +241,14 @@ function MovieComponent({id, history}) {
                             <Col xs className='mb-5'>
                                 <h3 className='movie-page-heading mb-0'>Top Reviews</h3>
                                 <div ref={reviewFeedRef} className='review-feed' style={{maxHeight: reviewFeedExpanded?"100%":"300px"}}>
-                                    {reviews?.length? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable (¬_¬")</p>}
-                                    {seeMore() && !reviewFeedExpanded && reviews?.length ? <div style={{height:"70%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.7), transparent)', width:'100%', bottom:'0'}} /> : null}
+                                    {seeMoreBtn.reviewsPresent ? reviews: <p className='mt-2 text-muted font-italic'>reviews unavailable (¬_¬")</p>}
+                                    {seeMoreBtn.reviewsPresent && seeMoreBtn.heightOver300 && !reviewFeedExpanded ? <div style={{height:"70%", position:'absolute', backgroundImage:'linear-gradient(0deg, black, rgba(0,0,0,0.7), transparent)', width:'100%', bottom:'0'}} /> : null}
                                 </div>
-                                {reviews?.length && seeMore() ? <p className='review-expand-btn' style={reviewFeedExpanded? {position:'relative', boxShadow:'none'}: null} onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>{reviewFeedExpanded? "Collapse": "Read more"}</p>:null}
+                                {seeMoreBtn.reviewsPresent && seeMoreBtn.heightOver300 ? 
+                                    <p className='review-expand-btn' style={reviewFeedExpanded? {position:'relative', boxShadow:'none'}: null} onClick={() => setReviewFeedExpanded(!reviewFeedExpanded)}>
+                                        {reviewFeedExpanded? "Collapse": "Read more"}
+                                    </p> : null
+                                }
                             </Col>
                         </Row>
                         <Row>

@@ -3,6 +3,7 @@ import { Row, Col, Container, Button, ButtonGroup } from "react-bootstrap";
 import { useHistory } from 'react-router';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import LoadingComponent from './LoadingComponent';
+import { Link } from 'react-router-dom';
 
 function PopularPage(props) {
 
@@ -11,10 +12,6 @@ function PopularPage(props) {
     const [error, setError] = useState('')
 
     const history = useHistory();
-
-    const dispMovie = (id) => {
-        history.push(`/movie/${id}`)
-    }
 
     const changePage = (dir) => {
         if(dir === 'beg') {
@@ -59,17 +56,19 @@ function PopularPage(props) {
 
     const movieCards = movieList?.map(movie => {
         return(
-            <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center' key={movie.id} onClick={() => dispMovie(movie.id)}>
-               <div className='movie-card'>
-                    <div className='movie-card-header'>
-                        <h5 className='mx-2'>{movie.title}</h5>
-                        <div style={{display:'flex', justifyContent:'space-between', margin:'5%',alignItems:'center'}}>
-                            <span>⭐ {movie.rating || 'NR'}</span>
-                            <span className='ml-2' style={{color:'lightgray'}}>{movie.releaseDate || ''}</span>
+            <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center' key={movie.id}>
+               <Link to={`/movie/${movie.id}`}>
+                   <div className='movie-card'>
+                        <div className='movie-card-header'>
+                            <h5 className='mx-2'>{movie.title}</h5>
+                            <div style={{display:'flex', justifyContent:'space-between', margin:'5%',alignItems:'center'}}>
+                                <span>⭐ {movie.rating || 'NR'}</span>
+                                <span className='ml-2' style={{color:'lightgray'}}>{movie.releaseDate || ''}</span>
+                            </div>
                         </div>
-                    </div>
-                    <img src={movie.imgUrl} alt='poster' height='379px' width='253px'/>
-               </div>
+                        <img src={movie.imgUrl} alt='poster' height='379px' width='253px'/>
+                   </div>
+               </Link>
             </Col>
         )
     })
