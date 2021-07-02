@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useLayoutEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from 'react-bootstrap'
 import { withRouter } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
