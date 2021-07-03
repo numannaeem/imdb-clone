@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Kumbh+Sans:wght@300;400;700&family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Kumbh+Sans:wght@300;400;700&family=Rammetto+One&display=swap');
 
 :root {  
   --primary: #3b0b7a;
@@ -456,26 +456,34 @@
   box-shadow: 0 0px 50px 3px hsl(256, 100%, 70%);
 }
 
+.video-body {
+  flex-basis: 70%;
+  flex-shrink: 0;
+}
+
+.video-name {
+  color: #ffffffb6;
+  width: 100%;
+  padding-left: 4%;
+  text-align: center;
+  font-family: 'Rammetto One', cursive;
+  font-size: clamp(1.75rem, 3vw, 2rem);
+}
+
 .video {
   border-radius: 0.8rem;
-  margin: auto;
-  width: 70%;
   overflow: hidden;
 }
 
 .video-buttons {
   color: rgb(201, 172, 255);
   padding: 0.3rem;
-  border-radius: 0.5rem;
-  border: 2px solid;
   cursor: pointer;
-  transition: background-color 150ms, color 150ms;
+  transition: border 150ms;
 }
 
 .video-buttons:hover {
-  color: #3b0b7a;
-  background-color: rgb(201, 172, 255);
-  border-color: rgb(201, 172, 255);
+  border-bottom: 3px solid rgb(201, 172, 255);
 }
 
 .recommendation {
@@ -688,6 +696,10 @@ footer {
     height: 250px;
   }
 
+  .video-body {
+    flex-basis: 100%;
+    text-align: center;
+  }
   .video {
     width: 100%;
   }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Button, ButtonGroup, ToggleButton } from "react-bootstrap";
 import { useHistory, useLocation } from "react-router";
+import { Link } from "react-router-dom";
 import { SkeletonTheme } from "react-loading-skeleton";
 import LoadingComponent from "./LoadingComponent";
 
@@ -14,14 +15,6 @@ function SearchResultsPage ({search, setSearch}) {
     const query = new URLSearchParams(useLocation().search)
     const queryText = query.get('query')
     const queryPage = query.get('page')
-    
-    const dispMovie = (id) => {
-        history.push(`/movie/${id}`)
-    }
-
-    const dispPerson = (id) => {
-        history.push(`/cast/${id}`)
-    }
 
     const changePage = (dir) => {
         window.scrollTo(0,0)
@@ -83,29 +76,33 @@ function SearchResultsPage ({search, setSearch}) {
 
     const resultCards = resultList ? search==='movie' ? resultList.map(movie => {
         return(
-            <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center' key={movie.id} onClick={() => dispMovie(movie.id)}>
-               <div className='movie-card'>
-                    <div className='movie-card-header'>
-                        <h5 className='mx-2 my-auto'>{movie.title}</h5>
-                        <div style={{display:'flex', justifyContent:'space-between', margin:'5%',alignItems:'center'}}>
-                            <span>⭐ {movie.rating || 'NR'}</span>
-                            <span className='ml-2' style={{color:'lightgray'}}>{movie.releaseDate || ''}</span>
+            <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center' key={movie.id}>
+               <Link to={`/movie/${movie.id}`}>
+                   <div className='movie-card'>
+                        <div className='movie-card-header'>
+                            <h5 className='mx-2'>{movie.title}</h5>
+                            <div style={{display:'flex', justifyContent:'space-between', margin:'5%',alignItems:'center'}}>
+                                <span>⭐ {movie.rating || 'NR'}</span>
+                                <span className='ml-2' style={{color:'lightgray'}}>{movie.releaseDate || ''}</span>
+                            </div>
                         </div>
-                    </div>
-                    <img src={movie.imgUrl} alt='poster' height='379px' width='253px'/>
-               </div>
+                        <img src={movie.imgUrl} alt='poster' height='379px' width='253px'/>
+                   </div>
+               </Link>
             </Col>
         )
     }) : resultList.map(person => {
         return(
-            <Col xs={6} sm={4} md={3} lg={2} className='p-sm-3 p-2' key={person.id} onClick={() => dispPerson(person.id)}>
-               <div className='person-card'>
-                    <img src={person.imgUrl} alt='poster'/>
-                    <div className='person-card-details'>
-                        <h5>{person.name}</h5>
-                        <h6 className='font-italic'>{person.department || ''}</h6>
-                    </div>
-               </div>
+            <Col xs={6} sm={4} md={3} lg={2} className='p-sm-3 p-2' key={person.id}>
+               <Link to={`/cast/${person.id}`}>
+                   <div className='person-card'>
+                        <img src={person.imgUrl} alt='poster'/>
+                        <div className='person-card-details'>
+                            <h5>{person.name}</h5>
+                            <h6 className='font-italic'>{person.department || ''}</h6>
+                        </div>
+                   </div>
+               </Link>
             </Col>
         )
     }) : null

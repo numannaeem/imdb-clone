@@ -72,7 +72,7 @@ function MovieComponent({id, history}) {
                         profileUrl: r.author_details.avatar_path? r.author_details.avatar_path.substring(0,5) !== '/http' ? `https://image.tmdb.org/t/p/w45${r.author_details.avatar_path}` : r.author_details.avatar_path.substring(1) :'https://static.stayjapan.com/assets/user_no_photo-4896a2d64d70a002deec3046d0b6ea6e7f01628781493566c95a02361524af97.png',
                         date: r.created_at ? new Date(r.created_at).toLocaleDateString('en-US',options) : null
                     })),
-                    videoUrls: data.videos.results?.filter(r => r.site === 'YouTube')?.map(v => v.key),
+                    videoUrls: data.videos.results?.filter(r => r.site === 'YouTube')?.map(v => ({key: v.key, name: v.name})),
                     recommendations: data.recommendations?.results?.map(m => ({
                         id: m.id,
                         title: m.title,
@@ -91,7 +91,6 @@ function MovieComponent({id, history}) {
     },[id])
 
     useEffect(() => {
-        console.log('hi')
         if (reviewFeedRef.current) { 
             setSeeMoreBtn(p => ({reviewsPresent:p.reviewsPresent, heightOver300: reviewFeedRef.current.clientHeight > 299}))
         }
@@ -155,8 +154,8 @@ function MovieComponent({id, history}) {
         })
         const videos = movie.videoUrls?.map(v => {
             return(
-                <div className='video mb-3' key={v}>
-                    <YoutubeEmbed embedId={v} />
+                <div className='video mb-3' key={v.key}>
+                    <YoutubeEmbed embedId={v.key} />
                 </div>
             )
         })
@@ -166,14 +165,14 @@ function MovieComponent({id, history}) {
                 if(currentVideo === movie.videoUrls.length - 1)
                     setCurrentVideo(0)
                 else
-                    setCurrentVideo((p) => p+1)
+                    setCurrentVideo(p => p+1)
                 return;
             }
             if(dir === 'prev') {
                 if(currentVideo === 0)
                     setCurrentVideo(movie.videoUrls.length - 1)
                 else
-                    setCurrentVideo((p) => p-1)
+                    setCurrentVideo(p => p-1)
                 return;
             }
         }
@@ -223,17 +222,22 @@ function MovieComponent({id, history}) {
                         </Row>
                         <Row>
                             <Col xs className='mb-5'>
-                                <h3 className='movie-page-heading'>Media</h3>
+                                <h3 className='movie-page-heading mb-3'>Media</h3>
                                 {movie.videoUrls && movie.videoUrls.length ? 
-                                <>
-                                   {videos[currentVideo]}
-                                   {movie.videoUrls.length > 1? 
-                                   <div className='text-center'>
-                                            <span className='mx-1 video-buttons' onClick={() => changeVideo("prev")}>Back</span>
-                                            <span> {currentVideo+1}/{movie.videoUrls.length} </span>
-                                            <span className='mx-1 video-buttons' onClick={() => changeVideo("next")}>Next</span>
-                                   </div>: null}
-                                </>
+                                <div className='d-flex align-items-center'>
+                                    <div className='video-body'>
+                                       {videos[currentVideo]}
+                                       {movie.videoUrls.length > 1? 
+                                       <div>
+                                                <span className='mx-1 video-buttons' onClick={() => changeVideo("prev")}>Back</span>
+                                                <span> {currentVideo+1}/{movie.videoUrls.length} </span>
+                                                <span className='mx-1 video-buttons' onClick={() => changeVideo("next")}>Next</span>
+                                       </div>: null}
+                                    </div>
+                                    <div className='video-name d-none d-md-block'>
+                                        <p>{movie.videoUrls[currentVideo]?.name || ''}</p>
+                                    </div>
+                                </div>
                                 : <p className='text-muted font-italic'>media unavailable (˘･_･˘)</p> }
                              </Col>
                         </Row>
