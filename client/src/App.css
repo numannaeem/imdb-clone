@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Kumbh+Sans:wght@300;400;700&family=Rammetto+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Kumbh+Sans:wght@300;400;700&family=Cabin:wght@700&display=swap');
 
 :root {  
   --primary: #3b0b7a;
@@ -53,7 +53,6 @@
   margin-right: 6px;
   color: rgba(255, 255, 255, 0.658);
   transition: color 150ms, background-color 150ms;
-  text-align: center;
 }
 
 .navbar-link-active {
@@ -187,6 +186,17 @@
   height: 100%;
 }
 
+.movie-cards-enter {
+  opacity: 0;
+  transform: translateY(-50px);
+}
+
+.movie-cards-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-out, transform 250ms ease-out;
+}
+
 .movie-card-header {
   width: 100%;
   min-height: 50%;
@@ -210,8 +220,8 @@
 
 .page-number {
   font-weight: bolder;
-  font-size: large;
-  padding: 6px 2px 0;
+  font-size: medium;
+  padding: 6px 4px 0;
   color: black;
   background-color: var(--secondary);
   z-index: 3;
@@ -222,7 +232,8 @@
 }
 
 .btn-group .btn {
-  border-radius: 1rem;
+  padding: 5px 8px;
+  border-radius: 0.8rem;
   background-color: transparent;
   border-color: var(--secondary);
   color: var(--secondary);
@@ -275,6 +286,7 @@
 }
 
 .person-card {
+  color: #ffffff;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -466,7 +478,7 @@
   width: 100%;
   padding-left: 4%;
   text-align: center;
-  font-family: 'Rammetto One', cursive;
+  font-family: 'Cabin', sans-serif;
   font-size: clamp(1.75rem, 3vw, 2rem);
 }
 
@@ -476,10 +488,12 @@
 }
 
 .video-buttons {
+  user-select: none;
   color: rgb(201, 172, 255);
+  font-weight: bold;
   padding: 0.3rem;
   cursor: pointer;
-  transition: border 150ms;
+  transition: border-bottom 300ms;
 }
 
 .video-buttons:hover {
@@ -487,7 +501,7 @@
 }
 
 .recommendation {
-  display: inline-flex;
+  height: auto;
   flex: 0 0 12rem;
   text-align: center;
   margin-right: 1rem;

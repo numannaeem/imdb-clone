@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Container, Row, Col } from "react-bootstrap"
+import { CSSTransition } from 'react-transition-group'
 import { useHistory } from "react-router";
 
 function WatchlistPage(props) {
@@ -16,7 +17,6 @@ function WatchlistPage(props) {
             } 
         }); 
         setMovies(movies)
-        console.log(movies)
     }, [])
 
     const history = useHistory();
@@ -43,14 +43,16 @@ function WatchlistPage(props) {
     })
 
     return(
-        <Container className='pb-5'>
-                <div className='feed-page-header text-center my-5'>
-                    <h1>My Watchlist</h1>
-                </div>
+        <Container className='pb-5'  style={{minHeight:'100vh'}}>
+            <div className='feed-page-header text-center my-5'>
+                <h2>My Watchlist</h2>
+            </div>
+            <CSSTransition in={Boolean(movieCards && movieCards.length)} timeout={400} classNames='movie-cards'>
                 <Row className='mb-5'>
                     {movieCards && movieCards.length ? movieCards : <h3 className='text-center w-100 text-muted my-5 mx-2' style={{height:'55vh'}}>Go to a movie and click on "Add to watchlist" to see them here!</h3>}   
                 </Row>
-            </Container>
+            </CSSTransition>
+        </Container>
     )
 }
 

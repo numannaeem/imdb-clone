@@ -3,6 +3,7 @@ import { Row, Col, Container, Button, ButtonGroup } from "react-bootstrap";
 import { useHistory } from 'react-router';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { Link } from "react-router-dom";
+import { CSSTransition } from 'react-transition-group'
 import LoadingComponent from './LoadingComponent';
 
 function TopRatedPage(props) {
@@ -77,7 +78,7 @@ function TopRatedPage(props) {
         <SkeletonTheme color="#505050" highlightColor="#303030">
             <Container style={{minHeight:'200vh', display:'flex', flexDirection:'column'}}>
                 <div className='feed-page-header text-center m-5'>
-                    <h1>Top Rated Movies</h1>
+                    <h2>Top Rated Movies</h2>
                     <div className='text-center mt-4'>
                         <ButtonGroup>
                             <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
@@ -88,12 +89,14 @@ function TopRatedPage(props) {
                         </ButtonGroup>
                     </div>
                 </div>
-                <Row className='mb-5'>
-                    { movieCards && movieCards.length ? movieCards 
-                    : error ? <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error || "Something went wrong"}<br />Try again later</h3>
-                    : <LoadingComponent page='feed' /> 
-                    }
-                </Row>
+                <CSSTransition in={Boolean(movieCards)} timeout={400} classNames='movie-cards'>
+                    <Row className='mb-5'>
+                        { movieCards && movieCards.length ? movieCards 
+                        : error ? <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error || "Something went wrong"}<br />Try again later</h3>
+                        : <LoadingComponent page='feed' /> 
+                        }     
+                    </Row>
+                </CSSTransition>
                 <div className='text-center mb-5 mt-auto'>
                     <ButtonGroup>
                         <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>

@@ -3,6 +3,7 @@ import { Container, Row, Col, Button, ButtonGroup, ToggleButton } from "react-bo
 import { useHistory, useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { SkeletonTheme } from "react-loading-skeleton";
+import { CSSTransition } from "react-transition-group";
 import LoadingComponent from "./LoadingComponent";
 
 function SearchResultsPage ({search, setSearch}) {
@@ -94,7 +95,7 @@ function SearchResultsPage ({search, setSearch}) {
     }) : resultList.map(person => {
         return(
             <Col xs={6} sm={4} md={3} lg={2} className='p-sm-3 p-2' key={person.id}>
-               <Link to={`/cast/${person.id}`}>
+               <Link to={`/cast/${person.id}`} style={{textDecoration:'none'}}>
                    <div className='person-card'>
                         <img src={person.imgUrl} alt='poster'/>
                         <div className='person-card-details'>
@@ -140,13 +141,15 @@ function SearchResultsPage ({search, setSearch}) {
                                 <Button variant="warning" disabled={queryPage >= totalPages} onClick={() => changePage('last')}><i className='fa fa-angle-double-right'></i></Button>
                             </ButtonGroup>
                         </div> : null}
-                        <Row className='mb-5 justify-content-center'>
-                            { error? <h4 className='mx-auto my-5 text-muted text-center' style={{height:'50vh'}}>{error}<br />Please try again later.</h4>
-                            : resultCards? resultCards.length ? resultCards 
-                            : <h4 className='mx-auto my-5 text-muted' style={{height:'50vh'}}>No results</h4>
-                            : <LoadingComponent page="feed" />
-                            }
-                        </Row>
+                        <CSSTransition in={Boolean(resultCards)} timeout={400} classNames='movie-cards'>
+                            <Row className='mb-5 justify-content-center'>
+                                { error? <h4 className='mx-auto my-5 text-muted text-center' style={{height:'50vh'}}>{error}<br />Please try again later.</h4>
+                                : resultCards? resultCards.length ? resultCards 
+                                : <h4 className='mx-auto my-5 text-muted' style={{height:'50vh'}}>No results</h4>
+                                : <LoadingComponent page="feed" />
+                                }
+                            </Row>
+                        </CSSTransition>
                         {totalPages > 1? <div className='text-center mb-5 mt-auto'>
                             <ButtonGroup>
                                 <Button variant="warning" disabled={queryPage <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>

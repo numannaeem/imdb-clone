@@ -4,6 +4,7 @@ import { withRouter } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
 import LoadingComponent from "./LoadingComponent";
 import { AddButton, DeleteButton } from "./watchlistButtons";
+import { FadeTransform } from 'react-animation-components';
 import { languages } from '../shared/languages'
 import YoutubeEmbed from "./YoutubeEmbed";
 
@@ -179,31 +180,33 @@ function MovieComponent({id, history}) {
 
         return(
             <div className='movie-page'>
-                <div className='movie-page-header' style={{backgroundImage:'linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),url('+ movie.backdropUrl + ')'}}>
-                    <img src={movie.imgUrl} alt="movie poster" className='d-none d-md-block' height="512px" width="342px" />
-                    <div className='header-details'>
-                        <a href={movie.imdbUrl} title="Visit movie website">{movie.title}</a>
-                        {movie.tagline && <h5 className='font-weight-light font-italic'>{movie.tagline}</h5>}
-                        <div>{genres}</div>
-                        <h5 className='my-2'>⭐{movie.rating || 'NR'}{movie.voteCount ? <small className='text-warning'> ({movie.voteCount} votes)</small> : null}</h5>
-                        <p className='font-weight-bold' style={{color:'darkgray'}}>{languages[movie.language].name} • {movie.releaseDate || 'In Production'} {movie.runtime? `• ${movie.runtime} mins` : null}</p>
-                        <div>
-                            <b>Producer(s): </b>
-                            <p>{producers && producers.length? producers : '-'}</p>
-                            <b>Director(s): </b>
-                            <p>{directors && directors.length? directors : '-'}</p>
-                            <b>Production Companies: </b>
-                            <p>{companies && companies.length? companies : '-'}</p>
+                <FadeTransform in duration={250} transformProps={{exitTransform: 'translateX(-15px)', enterTransform:'none'}}>
+                    <div className='movie-page-header' style={{backgroundImage:'linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),url('+ movie.backdropUrl + ')'}}>
+                        <img src={movie.imgUrl} alt="movie poster" className='d-none d-md-block' height="512px" width="342px" />
+                        <div className='header-details'>
+                            <a href={movie.imdbUrl} title="Visit movie website">{movie.title}</a>
+                            {movie.tagline && <h5 className='font-weight-light font-italic'>{movie.tagline}</h5>}
+                            <div>{genres}</div>
+                            <h5 className='my-2'>⭐{movie.rating || 'NR'}{movie.voteCount ? <small className='text-warning'> ({movie.voteCount} votes)</small> : null}</h5>
+                            <p className='font-weight-bold' style={{color:'darkgray'}}>{languages[movie.language].name} • {movie.releaseDate || 'In Production'} {movie.runtime? `• ${movie.runtime} mins` : null}</p>
+                            <div>
+                                <b>Producer(s): </b>
+                                <p>{producers && producers.length? producers : '-'}</p>
+                                <b>Director(s): </b>
+                                <p>{directors && directors.length? directors : '-'}</p>
+                                <b>Production Companies: </b>
+                                <p>{companies && companies.length? companies : '-'}</p>
+                            </div>
+                            <p>
+                                <b>Estimated Revenue: </b>{movie.revenue ? '$'+movie.revenue.toLocaleString('en-UK') : '-'}
+                            </p>
+                            { inWatchlist ? <DeleteButton movieId={id} onClick={() => setInWatchlist(false)}/> 
+                            : <AddButton onClick={() => setInWatchlist(true)} movieId={id} 
+                                name={JSON.stringify({title:movie.title, rating:movie.rating, imgUrl:movie.imgUrl, releaseDate:movie.releaseDate?.substr(-4,4)})}
+                            />}
                         </div>
-                        <p>
-                            <b>Estimated Revenue: </b>{movie.revenue ? '$'+movie.revenue.toLocaleString('en-UK') : '-'}
-                        </p>
-                        { inWatchlist ? <DeleteButton movieId={id} onClick={() => setInWatchlist(false)}/> 
-                        : <AddButton onClick={() => setInWatchlist(true)} movieId={id} 
-                            name={JSON.stringify({title:movie.title, rating:movie.rating, imgUrl:movie.imgUrl, releaseDate:movie.releaseDate?.substr(-4,4)})}
-                        />}
                     </div>
-                </div>
+                </FadeTransform>
                 <div className='movie-page-body'>
                     <Container>
                         <Row>
@@ -224,20 +227,22 @@ function MovieComponent({id, history}) {
                             <Col xs className='mb-5'>
                                 <h3 className='movie-page-heading mb-3'>Media</h3>
                                 {movie.videoUrls && movie.videoUrls.length ? 
-                                <div className='d-flex align-items-center'>
-                                    <div className='video-body'>
-                                       {videos[currentVideo]}
-                                       {movie.videoUrls.length > 1? 
-                                       <div>
-                                                <span className='mx-1 video-buttons' onClick={() => changeVideo("prev")}>Back</span>
-                                                <span> {currentVideo+1}/{movie.videoUrls.length} </span>
-                                                <span className='mx-1 video-buttons' onClick={() => changeVideo("next")}>Next</span>
-                                       </div>: null}
+                                <>
+                                    <div className='d-flex align-items-center'>
+                                        <div className='video-body'>
+                                           {videos[currentVideo]}
+                                        </div>
+                                        <div className='video-name d-none d-md-block'>
+                                            <p>{movie.videoUrls[currentVideo]?.name || ''}</p>
+                                        </div>
                                     </div>
-                                    <div className='video-name d-none d-md-block'>
-                                        <p>{movie.videoUrls[currentVideo]?.name || ''}</p>
-                                    </div>
-                                </div>
+                                    {movie.videoUrls.length > 1? 
+                                        <div className='text-center'>
+                                             <span className='mx-1 video-buttons' onClick={() => changeVideo("prev")}>Back</span>
+                                             <span> {currentVideo+1}/{movie.videoUrls.length} </span>
+                                             <span className='mx-1 video-buttons' onClick={() => changeVideo("next")}>Next</span>
+                                        </div>: null}
+                                </>
                                 : <p className='text-muted font-italic'>media unavailable (˘･_･˘)</p> }
                              </Col>
                         </Row>

@@ -4,6 +4,7 @@ import { useHistory } from 'react-router';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import LoadingComponent from './LoadingComponent';
 import { Link } from 'react-router-dom';
+import { CSSTransition } from 'react-transition-group'
 
 function PopularPage(props) {
 
@@ -56,20 +57,20 @@ function PopularPage(props) {
 
     const movieCards = movieList?.map(movie => {
         return(
-            <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center' key={movie.id}>
-               <Link to={`/movie/${movie.id}`}>
-                   <div className='movie-card'>
-                        <div className='movie-card-header'>
-                            <h5 className='mx-2'>{movie.title}</h5>
-                            <div style={{display:'flex', justifyContent:'space-between', margin:'5%',alignItems:'center'}}>
-                                <span>⭐ {movie.rating || 'NR'}</span>
-                                <span className='ml-2' style={{color:'lightgray'}}>{movie.releaseDate || ''}</span>
+                <Col xs={6} sm={6} md={4} lg={3} className='p-sm-3 p-2 text-center' key={movie.id}>
+                   <Link to={`/movie/${movie.id}`}>
+                       <div className='movie-card'>
+                            <div className='movie-card-header'>
+                                <h5 className='mx-2'>{movie.title}</h5>
+                                <div style={{display:'flex', justifyContent:'space-between', margin:'5%',alignItems:'center'}}>
+                                    <span>⭐ {movie.rating || 'NR'}</span>
+                                    <span className='ml-2' style={{color:'lightgray'}}>{movie.releaseDate || ''}</span>
+                                </div>
                             </div>
-                        </div>
-                        <img src={movie.imgUrl} alt='poster' height='379px' width='253px'/>
-                   </div>
-               </Link>
-            </Col>
+                            <img src={movie.imgUrl} alt='poster' height='379px' width='253px'/>
+                       </div>
+                   </Link>
+                </Col>
         )
     })
 
@@ -77,7 +78,7 @@ function PopularPage(props) {
         <SkeletonTheme color="#505050" highlightColor="#303030" >
             <Container style={{minHeight:'200vh', display:'flex', flexDirection:'column'}}>
                 <div className='feed-page-header text-center m-5'>
-                    <h1>Popular Movies</h1>
+                    <h2>Popular Movies</h2>
                     <div className='text-center mt-4'>
                         <ButtonGroup>
                             <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
@@ -88,12 +89,14 @@ function PopularPage(props) {
                         </ButtonGroup>
                     </div>
                 </div>
-                <Row className='mb-5'>
-                    { movieCards && movieCards.length ? movieCards 
-                    : error ? <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error || "Something went wrong"}<br />Try again later</h3>
-                    : <LoadingComponent page='feed' /> 
-                    }     
-                </Row>
+                <CSSTransition in={Boolean(movieCards)} timeout={400} classNames='movie-cards'>
+                    <Row className='mb-5'>
+                        { movieCards && movieCards.length ? movieCards 
+                        : error ? <h3 className="my-5 text-muted mx-auto text-center" style={{height:'30vh'}}>{error || "Something went wrong"}<br />Try again later</h3>
+                        : <LoadingComponent page='feed' /> 
+                        }     
+                    </Row>
+                </CSSTransition>
                 <div className='text-center mb-5 mt-auto'>
                     <ButtonGroup>
                         <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
