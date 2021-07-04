@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Container, Row, Col, Button, ButtonGroup, ToggleButton } from "react-bootstrap";
 import { useHistory, useLocation } from "react-router";
 import { Link } from "react-router-dom";
@@ -11,6 +11,7 @@ function SearchResultsPage ({search, setSearch}) {
     const [totalResults, setTotalResults] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
     const [error, setError] = useState('')
+    const searchRef = useRef(null)
 
     const history = useHistory();
     const query = new URLSearchParams(useLocation().search)
@@ -113,12 +114,25 @@ function SearchResultsPage ({search, setSearch}) {
         setSearch(e.target.value)
     }
 
+    const searchInner = (e,query) => {
+        e.preventDefault()
+        if(query) {
+            window.scrollTo(0,0)
+            history.push(`/search?query=${query}&page=1`);
+        }
+       searchRef.current.blur()
+    }
+
     if(queryText)
         return(
             <SkeletonTheme color="#505050" highlightColor="#303030">
                 <Container style={{minHeight:'180vh', display:'flex', flexDirection:'column'}}>
-                    <div className='feed-page-header text-center mt-5'>
-                        <h1>Search Results</h1>
+                    <div className='feed-page-header text-center mt-4 mt-md-5'>
+                        <form inline='true' className='search-bar mb-4 d-flex d-md-none' style={{width:'100%'}} onSubmit={(e) => searchInner(e,searchRef.current.value)}>
+                            <input className='search-bar-input' ref={searchRef} style={{width:'100%'}} type='text' placeholder='Search for movies or people'/>
+                            <button type='submit'><i className='fa fa-search'></i></button>
+                        </form>
+                        <h2>Search Results</h2>
                         <div className='search-type'>
                             <ButtonGroup toggle>
                                 <ToggleButton id="movie" checked={search === 'movie'} value='movie' onChange={(e) => handleChange(e)} type="radio" >

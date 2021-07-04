@@ -191,7 +191,7 @@ function MovieComponent({id, history}) {
                             {movie.tagline && <h5 className='font-weight-light font-italic'>{movie.tagline}</h5>}
                             <div>{genres}</div>
                             <h5 className='my-2'>⭐{movie.rating || 'NR'}{movie.voteCount ? <small className='text-warning'> ({movie.voteCount} votes)</small> : null}</h5>
-                            <p className='font-weight-bold' style={{color:'darkgray'}}>{languages[movie.language].name} • {movie.releaseDate || 'In Production'} {movie.runtime? `• ${movie.runtime} mins` : null}</p>
+                            <p className='font-weight-bold' style={{color:'darkgray'}}>{languages[movie.language]?.name || 'NA'} • {movie.releaseDate || 'In Production'} {movie.runtime? `• ${movie.runtime} mins` : null}</p>
                             <div>
                                 <b>Producer(s): </b>
                                 <p>{producers && producers.length? producers : '-'}</p>

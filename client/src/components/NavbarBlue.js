@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Navbar, Nav, Form, Button, InputGroup } from 'react-bootstrap';
+import { Navbar, Nav, Form } from 'react-bootstrap';
 import { useHistory, withRouter } from 'react-router';
 import { NavLink } from 'react-router-dom';
 
@@ -29,13 +29,9 @@ function NavbarBlue(props) {
           <NavLink activeClassName="navbar-link-active" onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/upcoming">Upcoming</NavLink>
           <NavLink activeClassName="navbar-link-active" onClick={() => {if(expanded) setExpanded(false)}} className='navbar-link' to="/watchlist">My Watchlist</NavLink>
         </Nav>
-        <Form onSubmit={(e) => search(e,searchRef.current.value)}>
-          <InputGroup style={{maxWidth:"250px"}} id='navbar-search'>
-            <Form.Control variant='warning' type="text" placeholder="Search" ref={searchRef} />
-            <InputGroup.Append>
-              <Button type='submit' variant="outline-warning"><i className='fa fa-search'></i></Button>
-            </InputGroup.Append>
-          </InputGroup>
+        <Form inline className='search-bar' onSubmit={(e) => search(e,searchRef.current.value)} style={{width:'fit-content'}}>
+            <input className='search-bar-input' ref={searchRef} style={{width:'100%', padding:'6px 0 6px 9px'}} type='text' placeholder='Search away!'/>
+            <button type='submit'><i className='fa fa-search' /></button>
         </Form>
       </Navbar.Collapse>
     </Navbar>
