@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from 'react-bootstrap'
 import { withRouter } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
-import { FadeTransform } from 'react-animation-components';
 import { CSSTransition } from "react-transition-group";
 import LoadingComponent from "./LoadingComponent";
 import { AddButton, DeleteButton } from "./watchlistButtons";
