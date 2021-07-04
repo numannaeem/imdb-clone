@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from 'react-bootstrap'
 import { withRouter } from "react-router";
 import { SkeletonTheme } from "react-loading-skeleton";
+import { FadeTransform } from 'react-animation-components';
+import { CSSTransition } from "react-transition-group";
 import LoadingComponent from "./LoadingComponent";
 import { AddButton, DeleteButton } from "./watchlistButtons";
-import { FadeTransform } from 'react-animation-components';
 import { languages } from '../shared/languages'
 import YoutubeEmbed from "./YoutubeEmbed";
 
@@ -15,6 +16,7 @@ function MovieComponent({id, history}) {
     const [inWatchlist, setInWatchlist] = useState(false)
     const [reviewFeedExpanded, setReviewFeedExpanded] = useState(false);
     const [currentVideo, setCurrentVideo] = useState(null);
+    const [inProp, setInProp] = useState(false)
     const [seeMoreBtn, setSeeMoreBtn] = useState({
         reviewsPresent: false,
         heightOver300: false 
@@ -30,7 +32,8 @@ function MovieComponent({id, history}) {
         history.push(`/movie/${id}`)
     }
     
-    useEffect(() => {     
+    useEffect(() => {  
+        setInProp(false)   
         window.scrollTo(0,0)
         setInWatchlist(Boolean(localStorage.getItem(`mId:${id}`)))
         fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&append_to_response=credits,reviews,videos,recommendations`)
@@ -84,7 +87,7 @@ function MovieComponent({id, history}) {
                 }
                 setMovie(filteredMovie)
                 setCurrentVideo(0)
-                setSeeMoreBtn((p) => ({heightOver300: p.heightOver300, reviewsPresent: filteredMovie.reviews.length > 0}))
+                setSeeMoreBtn(p => ({heightOver300: p.heightOver300, reviewsPresent: filteredMovie.reviews.length > 0}))
             })
             .catch(err => {
                 setError(err.message)
@@ -94,6 +97,7 @@ function MovieComponent({id, history}) {
     useEffect(() => {
         if (reviewFeedRef.current) { 
             setSeeMoreBtn(p => ({reviewsPresent:p.reviewsPresent, heightOver300: reviewFeedRef.current.clientHeight > 299}))
+            setInProp(true)
         }
         else {
             setSeeMoreBtn({
@@ -180,7 +184,7 @@ function MovieComponent({id, history}) {
 
         return(
             <div className='movie-page'>
-                <FadeTransform in duration={250} transformProps={{exitTransform: 'translateX(-15px)', enterTransform:'none'}}>
+                <CSSTransition in={inProp} timeout={400} classNames='movie-cards'>
                     <div className='movie-page-header' style={{backgroundImage:'linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)),url('+ movie.backdropUrl + ')'}}>
                         <img src={movie.imgUrl} alt="movie poster" className='d-none d-md-block' height="512px" width="342px" />
                         <div className='header-details'>
@@ -206,7 +210,7 @@ function MovieComponent({id, history}) {
                             />}
                         </div>
                     </div>
-                </FadeTransform>
+                </CSSTransition>
                 <div className='movie-page-body'>
                     <Container>
                         <Row>

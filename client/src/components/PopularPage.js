@@ -83,7 +83,7 @@ function PopularPage(props) {
                         <ButtonGroup>
                             <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
                             <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('prev')}><i className='fa fa-angle-left'></i></Button>
-                            <div className='page-number'><p className='mb-0'>{props.page}</p></div>
+                            <div className='page-number'><span>{props.page}</span></div>
                             <Button variant="warning" disabled={props.page >= totalPages} onClick={() => changePage('next')}><i className='fa fa-angle-right'></i></Button>
                             <Button variant="warning" disabled={props.page >= totalPages} onClick={() => changePage('last')}><i className='fa fa-angle-double-right'></i></Button>
                         </ButtonGroup>

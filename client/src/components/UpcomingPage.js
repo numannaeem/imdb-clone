@@ -79,7 +79,7 @@ function UpcomingPage(props) {
             <Container style={{minHeight:'200vh', display:'flex', flexDirection:'column'}}>
                 <div className='feed-page-header text-center m-5'>
                     <h2>Upcoming Movies</h2>
-                    <div className='text-center my-4'>
+                    <div className='text-center mt-4'>
                         <ButtonGroup>
                             <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('beg')}><i className='fa fa-angle-double-left'></i></Button>
                             <Button variant="warning" disabled={props.page <= '1'}  onClick={() => changePage('prev')}><i className='fa fa-angle-left'></i></Button>
