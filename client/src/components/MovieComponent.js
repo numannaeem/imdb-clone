@@ -6,6 +6,7 @@ import { CSSTransition } from "react-transition-group";
 import LoadingComponent from "./LoadingComponent";
 import { AddButton, DeleteButton } from "./watchlistButtons";
 import { languages } from '../shared/languages'
+import ReactMarkdown from 'react-markdown'
 import YoutubeEmbed from "./YoutubeEmbed";
 
 function MovieComponent({id, history}) {
@@ -118,8 +119,8 @@ function MovieComponent({id, history}) {
         const directors = movie.directors?.map((p, idx) => idx !== movie.directors.length - 1 ? p + ', ' : p)
         const reviews = movie.reviews?.map(r => {
             return(
-                <div className='review-card' key={r.id}>
-                    <div className='d-flex align-items-center'>
+                <div className='review-card pb-4' key={r.id}>
+                    <div className='d-flex align-items-center pb-2'>
                         <img src={r.profileUrl} height='45px' width='45px' alt={r.author}/>
                         <div className='ml-2'>
                             <h6 className='mb-0'>{r.author}</h6>
@@ -127,7 +128,10 @@ function MovieComponent({id, history}) {
                         </div>
                     </div>
                     <hr style={{borderColor:'gray'}} className='mt-1'/>
-                    <p className='font-weight-light'>{r.content}</p>
+                    <ReactMarkdown  
+                    components={{
+                        p: ({node, ...props}) => <p className="mb-0" {...props} />
+                    }}>{r.content}</ReactMarkdown>
                 </div>
             )
         })
